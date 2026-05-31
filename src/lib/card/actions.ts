@@ -143,3 +143,11 @@ export async function updateProfile(input: {
   revalidatePath("/collection")
   return { ok: true }
 }
+
+/** Fetch N random PokéAPI cards (for the landing "shuffle" button). */
+export async function shuffleShowcaseCards(
+  count = 3,
+): Promise<import("@/types/card").PetCardRecord[]> {
+  const { fetchRandomPokemonCards } = await import("@/lib/pokeapi/fetch")
+  return fetchRandomPokemonCards(count)
+}

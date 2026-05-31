@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import type { Metadata } from "next"
-import { ArrowLeft, Wand2 } from "lucide-react"
+import { ArrowLeft, Wand2, Share2 } from "lucide-react"
 import { fetchCardBySlug, hasLikedCard } from "@/lib/card/queries"
 import { fetchPokemonCardBySlug } from "@/lib/pokeapi/fetch"
 import { PetCard } from "@/components/card/renderer"
@@ -115,11 +115,18 @@ export default async function CardDetailPage({ params }: CardPageProps) {
           </div>
 
           <div className="pt-2">
-            <Button asChild size="lg" className="font-bold">
-              <Link href={`/create?remix=${card.slug}`}>
-                <Wand2 className="h-4 w-4" /> Remix this card
-              </Link>
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <Button asChild size="lg" className="font-bold">
+                <Link href={`/create?remix=${card.slug}`}>
+                  <Wand2 className="h-4 w-4" /> Remix this card
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline" className="font-bold">
+                <Link href={`/s/${card.slug}`}>
+                  <Share2 className="h-4 w-4" /> Share card
+                </Link>
+              </Button>
+            </div>
             <p className="mt-2 text-xs text-muted-foreground">
               Opens this card in the editor as a new draft — tweak it and make it yours.
             </p>

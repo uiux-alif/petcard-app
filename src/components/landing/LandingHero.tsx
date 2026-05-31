@@ -1,31 +1,16 @@
 import Link from "next/link"
 import { ArrowRight, Sparkles } from "lucide-react"
-import { PetCard } from "@/components/card/renderer"
 import { Button } from "@/components/ui/button"
-import { CARD_DEFAULTS } from "@/lib/card/constants"
-import type { CardData } from "@/types/card"
+import { fetchRandomPokemonCards } from "@/lib/pokeapi/fetch"
+import { FloatingTypePills } from "./FloatingTypePills"
+import { HeroCardFan } from "./HeroCardFan"
 
-const heroCard: CardData = {
-  ...CARD_DEFAULTS,
-  name: "Mochi",
-  species: "Golden Retriever",
-  type: "electric",
-  rarity: 5,
-  stage: "EX",
-  stats: { hp: 120, atk: 80, def: 60, spd: 70 },
-  flavor: "Sleeps all day, zooms all night",
-  moves: [
-    { name: "Paw Swipe", damage: 30, cost: 1 },
-    { name: "Thunder Bark", damage: 90, cost: 3 },
-  ],
-  template: "classic",
-  holo: "rainbow",
-  holoStrength: 0.85,
-}
+export async function LandingHero() {
+  // Three random PokéAPI-backed cards for the hero fan.
+  const cards = await fetchRandomPokemonCards(3)
 
-export function LandingHero() {
   return (
-    <section className="relative flex min-h-[calc(100vh-57px)] flex-col items-center justify-center gap-14 overflow-hidden px-6 py-16 lg:flex-row lg:gap-24 lg:px-10">
+    <section className="relative flex min-h-[calc(100vh-57px)] flex-col items-center justify-center gap-14 overflow-hidden px-6 py-16 lg:flex-row lg:gap-20 lg:px-10">
       {/* Ambient glows */}
       <div
         className="pointer-events-none absolute inset-0"
@@ -34,6 +19,8 @@ export function LandingHero() {
             "radial-gradient(ellipse 50% 50% at 25% 40%, rgba(192,132,252,0.12) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 75% 60%, rgba(74,222,128,0.1) 0%, transparent 60%)",
         }}
       />
+      {/* Floating type emoji pills */}
+      <FloatingTypePills />
       {/* Faint dotted grid */}
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.15]"
@@ -59,7 +46,7 @@ export function LandingHero() {
         </h1>
 
         <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-          Upload a photo, pick a type, tune the stats, and add real holographic shine. Five
+          Upload a photo, pick a type, tune the stats, and add real holographic shine. Fifteen
           templates, nine foil effects, exported as a crisp PNG. Built for the love of good boys,
           floofs, and chaotic little gremlins.
         </p>
@@ -79,7 +66,7 @@ export function LandingHero() {
         </div>
 
         <div className="mt-8 flex items-center justify-center gap-6 lg:justify-start">
-          <Stat value="5" label="Templates" />
+          <Stat value="15" label="Templates" />
           <div className="h-8 w-px bg-border" />
           <Stat value="9" label="Holo effects" />
           <div className="h-8 w-px bg-border" />
@@ -87,8 +74,8 @@ export function LandingHero() {
         </div>
       </div>
 
-      <div className="relative z-10 shrink-0">
-        <PetCard card={heroCard} tilt />
+      <div className="relative z-10 w-full max-w-md shrink-0">
+        <HeroCardFan initialCards={cards} />
       </div>
     </section>
   )

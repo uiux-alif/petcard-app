@@ -14,12 +14,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/components/providers/auth-provider"
+import { CARD_TYPES } from "@/lib/card/constants"
+import type { CardType } from "@/types/card"
 
 const NAV_LINKS = [
   { href: "/create", label: "Create" },
   { href: "/collection", label: "Collection" },
   { href: "/community", label: "Community" },
 ]
+
+const TYPE_EMOJIS = (Object.entries(CARD_TYPES) as [CardType, { emoji: string; label: string }][]).map(
+  ([type, cfg]) => ({ type, emoji: cfg.emoji, label: cfg.label }),
+)
 
 export function SiteHeader() {
   const pathname = usePathname()
@@ -41,9 +47,24 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur-xl">
       <div className="flex items-center justify-between px-5 py-3.5 sm:px-8">
-        <Link href="/" className="text-base font-bold tracking-tight">
-          <span className="rainbow-text">PetCard</span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link href="/" className="text-base font-bold tracking-tight">
+            <span className="rainbow-text">PetCard</span>
+          </Link>
+          {/* The 8 Pokémon-style type emojis, lined up next to the logo */}
+          <div className="hidden items-center gap-0.5 border-l border-border pl-3 md:flex">
+            {TYPE_EMOJIS.map(({ type, emoji, label }) => (
+              <span
+                key={type}
+                title={label}
+                className="text-sm leading-none transition-transform hover:-translate-y-0.5"
+                aria-hidden
+              >
+                {emoji}
+              </span>
+            ))}
+          </div>
+        </div>
 
         <nav className="flex items-center gap-1">
           {NAV_LINKS.map((link) => {

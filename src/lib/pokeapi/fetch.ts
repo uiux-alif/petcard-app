@@ -57,3 +57,17 @@ export async function fetchPokemonCardBySlug(slug: string): Promise<PetCardRecor
   const p = await fetchPokemon(name)
   return p ? toRecord(p) : null
 }
+
+/** Gen-1 dex size — used to bound random picks. */
+const GEN1_COUNT = 151
+
+/** Fetch N random (gen-1) Pokémon mapped to community cards. */
+export async function fetchRandomPokemonCards(count = 3): Promise<PetCardRecord[]> {
+  // Unique random ids in 1..151.
+  const ids = new Set<number>()
+  while (ids.size < Math.min(count, GEN1_COUNT)) {
+    ids.add(Math.floor(Math.random() * GEN1_COUNT) + 1)
+  }
+  const results = await Promise.all([...ids].map((id) => fetchPokemon(id)))
+  return results.filter((p): p is PokeApiPokemon => p !== null).map(toRecord)
+}

@@ -198,3 +198,29 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .font-card-sans {
   font-family: var(--font-card-sans), "DM Sans", sans-serif;
 }
+
+/* ─── Floating type pills (landing) ─── */
+.float-pill {
+  animation-name: float-bob;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+@keyframes float-bob {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float-pill {
+    animation: none;
+  }
+}
