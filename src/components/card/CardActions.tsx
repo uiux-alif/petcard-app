@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Pencil, Trash2, Loader2 } from "lucide-react"
+import { Pencil, Trash2, Loader2, Share2, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   AlertDialog,
@@ -21,13 +21,16 @@ import { deleteCard } from "@/lib/card/actions"
 interface CardActionsProps {
   cardId: string
   cardName: string
+  /** Slug used for the public share URL (/c/[slug]). */
+  cardSlug: string
 }
 
-export function CardActions({ cardId, cardName }: CardActionsProps) {
+export function CardActions({ cardId, cardName, cardSlug }: CardActionsProps) {
   const router = useRouter()
   const toast = useToast()
   const [open, setOpen] = useState(false)
   const [pending, startTransition] = useTransition()
+  const [copied, setCopied] = useState(false)
 
   function handleDelete() {
     startTransition(async () => {
@@ -42,12 +45,39 @@ export function CardActions({ cardId, cardName }: CardActionsProps) {
     })
   }
 
+  async function handleShare() {
+    if (typeof window === "undefined") return
+    const url = `${window.location.origin}/c/${cardSlug}`
+    try {
+      await navigator.clipboard.writeText(url)
+      setCopied(true)
+      toast.show("Link copied! ✓", "success")
+      setTimeout(() => setCopied(false), 1800)
+    } catch {
+      toast.show("Couldn't copy link — try again", "error")
+    }
+  }
+
   return (
     <div className="flex items-center gap-1">
       <Button asChild size="icon" variant="ghost" className="h-7 w-7" title="Edit card">
         <Link href={`/create/${cardId}`}>
           <Pencil className="h-3.5 w-3.5" />
         </Link>
+      </Button>
+
+      <Button
+        size="icon"
+        variant="ghost"
+        className="h-7 w-7"
+        title="Copy share link"
+        onClick={handleShare}
+      >
+        {copied ? (
+          <Check className="h-3.5 w-3.5 text-primary" />
+        ) : (
+          <Share2 className="h-3.5 w-3.5" />
+        )}
       </Button>
 
       <Button

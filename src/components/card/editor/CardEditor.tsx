@@ -87,14 +87,37 @@ export function CardEditor({ cardId, initialCard, initialPublic = false }: CardE
     setSaving(false)
 
     if (result.ok) {
-      toast.show(
-        isEditing
-          ? "Card updated!"
-          : isPublic
-            ? "Published to community! 🎉"
-            : "Card saved to collection!",
-        "success",
-      )
+      // Resolve a slug for the share link. New saves return one in result.data;
+      // edits keep the existing slug (we passed it via initialCard).
+      const newSlug = !isEditing && result.data ? result.data.slug : undefined
+      const shareSlug = newSlug ?? null
+
+      const successMessage = isEditing
+        ? "Card updated!"
+        : isPublic
+          ? "Published to community! 🎉"
+          : "Card saved to collection!"
+
+      // Offer a one-click "Copy link" right at the dopamine peak — the share
+      // moment users actually want. Only when we have a slug to share.
+      toast.show(successMessage, "success", {
+        durationMs: shareSlug ? 5000 : 2800,
+        action: shareSlug
+          ? {
+            label: "Copy link",
+            onClick: async () => {
+              const url = `${window.location.origin}/c/${shareSlug}`
+              try {
+                await navigator.clipboard.writeText(url)
+                toast.show("Link copied! ✓", "success")
+              } catch {
+                toast.show("Couldn't copy link", "error")
+              }
+            },
+          }
+          : undefined,
+      })
+
       builder.markClean()
       router.push("/collection")
       router.refresh()

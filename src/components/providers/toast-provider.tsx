@@ -2,11 +2,28 @@
 
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react"
 import { CheckCircle2, XCircle, Info } from "lucide-react"
-import type { ToastMessage, ToastType } from "@/types/card"
+import type { ToastType } from "@/types/card"
 import { cn } from "@/lib/utils"
 
+interface ToastAction {
+  label: string
+  onClick: () => void
+}
+
+interface ToastMessage {
+  id: string
+  message: string
+  type: ToastType
+  action?: ToastAction
+  durationMs: number
+}
+
 interface ToastContextValue {
-  show: (message: string, type?: ToastType) => void
+  show: (
+    message: string,
+    type?: ToastType,
+    options?: { action?: ToastAction; durationMs?: number },
+  ) => void
 }
 
 const ToastContext = createContext<ToastContextValue | null>(null)
@@ -22,12 +39,13 @@ let counter = 0
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<ToastMessage[]>([])
 
-  const show = useCallback((message: string, type: ToastType = "success") => {
+  const show = useCallback<ToastContextValue["show"]>((message, type = "success", options) => {
     const id = `toast-${counter++}`
-    setToasts((prev) => [...prev, { id, message, type }])
+    const durationMs = options?.durationMs ?? 2800
+    setToasts((prev) => [...prev, { id, message, type, action: options?.action, durationMs }])
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id))
-    }, 2800)
+    }, durationMs)
   }, [])
 
   return (
@@ -40,7 +58,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             <div
               key={toast.id}
               className={cn(
-                "pointer-events-auto flex items-center gap-2 rounded-md border bg-card px-4 py-2.5 text-sm shadow-lg",
+                "pointer-events-auto flex items-center gap-3 rounded-md border bg-card px-4 py-2.5 text-sm shadow-lg",
                 "animate-in fade-in slide-in-from-bottom-3",
                 toast.type === "error" && "border-destructive/40",
                 toast.type === "success" && "border-primary/40",
@@ -55,6 +73,15 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 )}
               />
               <span>{toast.message}</span>
+              {toast.action && (
+                <button
+                  type="button"
+                  onClick={toast.action.onClick}
+                  className="rounded border border-border px-2 py-0.5 font-mono text-[11px] font-semibold text-foreground hover:bg-secondary"
+                >
+                  {toast.action.label}
+                </button>
+              )}
             </div>
           )
         })}

@@ -57,7 +57,7 @@ export function CardGridItem({
         )}
 
         {editable ? (
-          <CardActions cardId={card.id} cardName={card.name} />
+          <CardActions cardId={card.id} cardName={card.name} cardSlug={card.slug} />
         ) : interactiveLikes ? (
           <LikeButton cardId={card.id} initialLikes={card.likesCount} initialLiked={liked} />
         ) : (

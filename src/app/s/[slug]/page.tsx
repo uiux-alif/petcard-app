@@ -5,6 +5,7 @@ import { ArrowRight, Heart } from "lucide-react"
 import { fetchCardBySlug } from "@/lib/card/queries"
 import { fetchPokemonCardBySlug } from "@/lib/pokeapi/fetch"
 import { PetCard } from "@/components/card/renderer"
+import { CopyLinkButton } from "@/components/card/CopyLinkButton"
 import { getRarityConfig, getTypeConfig } from "@/lib/card/utils"
 import { Button } from "@/components/ui/button"
 import type { PetCardRecord } from "@/types/card"
@@ -105,12 +106,17 @@ export default async function SharePage({ params }: SharePageProps) {
               Create your own now <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
-          <Link
-            href={`/c/${card.slug}`}
-            className="mt-3 inline-block text-xs text-muted-foreground hover:text-foreground"
-          >
-            View full card details →
-          </Link>
+          <div className="mt-3 flex items-center justify-between">
+            <Link
+              href={`/c/${card.slug}`}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              View full card details →
+            </Link>
+            <CopyLinkButton path={`/c/${card.slug}`} size="sm" variant="ghost">
+              Copy link
+            </CopyLinkButton>
+          </div>
         </div>
       </div>
     </main>
