@@ -1,0 +1,61 @@
+// PetCard — Prisma schema
+// Models the PRD data layer: users, cards (card_data JSON), card_likes.
+// Card JSON is the source of truth; the rendered image is an export artifact.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  email     String   @unique
+  avatarUrl String?  @map("avatar_url")
+  bio       String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  cards     Card[]
+  likes     CardLike[]
+
+  @@map("users")
+}
+
+model Card {
+  id           String   @id @default(cuid())
+  userId       String   @map("user_id")
+  title        String
+  slug         String   @unique
+  // Structured CardData JSON — the source of truth.
+  cardData     Json     @map("card_data")
+  thumbnailUrl String?  @map("thumbnail_url")
+  isPublic     Boolean  @default(false) @map("is_public")
+  likesCount   Int      @default(0) @map("likes_count")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes        CardLike[]
+
+  @@index([userId])
+  @@index([isPublic])
+  @@map("cards")
+}
+
+model CardLike {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  cardId    String   @map("card_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card      Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, cardId])
+  @@index([cardId])
+  @@map("card_likes")
+}

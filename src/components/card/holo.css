@@ -1,0 +1,281 @@
+/* ============================================================
+   Holographic effects — adapted from pokemon-cards-css (MIT)
+   github.com/simeydotme/pokemon-cards-css
+   Tuned for DARK card backgrounds: the original uses color-dodge
+   (great on bright artwork) which is near-invisible on black, so
+   the final compositing here uses `screen` which always lightens.
+   Driven by pointer CSS vars from use-holo-pointer.ts.
+   ============================================================ */
+
+[data-holo] {
+  /* Static assets/colors only. The DYNAMIC pointer vars
+     (--card-opacity, --pointer-*, --background-*) are intentionally
+     NOT declared here — they must inherit from the .card-scene inline
+     style. Declaring them here shadows the inherited value and pins
+     every overlay's opacity to 0 (invisible). */
+  --glitter: url("/holo/glitter.png");
+  --glittersize: 22%;
+
+  --clr-1: hsl(2, 100%, 73%);
+  --clr-2: hsl(53, 100%, 69%);
+  --clr-3: hsl(93, 100%, 69%);
+  --clr-4: hsl(176, 100%, 76%);
+  --clr-5: hsl(228, 100%, 74%);
+  --clr-6: hsl(283, 100%, 73%);
+}
+
+/* Shine + glare overlays, clipped to the card's rounded frame */
+.holo-shine,
+.holo-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  /* Textures (glitter) must tile to fill the card; gradients are sized to
+     cover so repeat is harmless to them. Using no-repeat here caused the
+     glitter to render as one centered tile (a dark speckled box). */
+  background-repeat: repeat;
+  will-change: opacity, background-position, background-size, filter;
+}
+
+.holo-shine {
+  z-index: 13;
+  mix-blend-mode: screen;
+  opacity: calc(max(var(--card-opacity, 0), var(--idle-opacity, 0)) * var(--holo-strength, 0.7));
+}
+
+.holo-glare {
+  z-index: 14;
+  mix-blend-mode: screen;
+  opacity: calc(max(var(--card-opacity, 0), var(--idle-opacity, 0)) * var(--holo-strength, 0.7));
+}
+
+/* ─── Idle "breathing" effect ───
+   Animates a dedicated --idle-opacity (registered below so it tweens
+   smoothly). It's combined with the pointer-driven --card-opacity via
+   max(), so hovering still pushes to full strength while, at rest, the
+   holo gently breathes in and out — peaking at ~50% — with a pause. */
+@property --idle-opacity {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+.pet-card.holo-idle {
+  animation: holo-breathe 7s ease-in-out infinite;
+}
+
+@keyframes holo-breathe {
+
+  0%,
+  16% {
+    --idle-opacity: 0;
+  }
+
+  50% {
+    --idle-opacity: 0.5;
+  }
+
+  84%,
+  100% {
+    --idle-opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pet-card.holo-idle {
+    animation: none;
+  }
+}
+
+/* none → no overlays */
+[data-holo="none"] .holo-shine,
+[data-holo="none"] .holo-glare {
+  display: none;
+}
+
+/* ─── BASIC FOIL ─── */
+[data-holo="basic"] .holo-shine {
+  background-image: linear-gradient(115deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.25) 40%,
+      rgba(255, 255, 255, 0.85) 50%,
+      rgba(255, 255, 255, 0.25) 60%,
+      transparent 80%);
+  background-size: 250% 250%;
+  background-position: calc(var(--pointer-from-left) * 100%) calc(var(--pointer-from-top) * 100%);
+}
+
+[data-holo="basic"] .holo-glare {
+  background-image: radial-gradient(circle at var(--pointer-x) var(--pointer-y),
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(255, 255, 255, 0.15) 25%,
+      transparent 55%);
+}
+
+/* ─── REVERSE HOLO (sparkle foil) ─── */
+[data-holo="reverse"] .holo-shine {
+  background-image:
+    var(--glitter),
+    linear-gradient(125deg,
+      rgba(255, 0, 132, 0.5) 15%,
+      rgba(252, 164, 0, 0.4) 30%,
+      rgba(255, 255, 0, 0.35) 40%,
+      rgba(0, 255, 138, 0.3) 60%,
+      rgba(0, 207, 255, 0.4) 70%,
+      rgba(204, 76, 250, 0.5) 85%);
+  background-size: var(--glittersize) var(--glittersize), 200% 200%;
+  background-position:
+    calc(var(--pointer-from-left) * 100%) calc(var(--pointer-from-top) * 100%),
+    calc(var(--background-x) * 1.4) calc(var(--background-y) * 1.4);
+  background-blend-mode: overlay;
+  filter: brightness(1.1) contrast(1.3) saturate(1.4);
+}
+
+[data-holo="reverse"] .holo-glare {
+  background-image: radial-gradient(circle at var(--pointer-x) var(--pointer-y),
+      rgba(255, 255, 255, 0.8) 5%,
+      rgba(255, 255, 255, 0.2) 25%,
+      transparent 60%);
+}
+
+/* ─── REGULAR HOLO (rainbow pillars) ─── */
+[data-holo="regular"] .holo-shine {
+  background-image: repeating-linear-gradient(100deg,
+      var(--clr-1), var(--clr-2), var(--clr-3),
+      var(--clr-4), var(--clr-5), var(--clr-6),
+      var(--clr-1), var(--clr-2), var(--clr-3),
+      var(--clr-4), var(--clr-5), var(--clr-6));
+  background-size: 200% 200%;
+  background-position:
+    calc(((50% - var(--background-x)) * 2.6) + 50%) calc(((50% - var(--background-y)) * 3.5) + 50%);
+  filter: brightness(1) contrast(1.2) saturate(1.3);
+}
+
+[data-holo="regular"] .holo-glare {
+  background-image: radial-gradient(circle at var(--pointer-x) var(--pointer-y),
+      rgba(220, 255, 255, 0.85) 5%,
+      rgba(120, 120, 120, 0.2) 50%,
+      transparent 90%);
+}
+
+/* ─── RAINBOW SECRET ─── */
+[data-holo="rainbow"] .holo-shine {
+  background-image:
+    var(--glitter),
+    linear-gradient(-35deg,
+      hsl(0, 100%, 60%), hsl(40, 100%, 60%), hsl(90, 100%, 55%),
+      hsl(180, 100%, 55%), hsl(210, 100%, 60%), hsl(280, 100%, 65%),
+      hsl(0, 100%, 60%), hsl(40, 100%, 60%), hsl(90, 100%, 55%),
+      hsl(180, 100%, 55%), hsl(210, 100%, 60%), hsl(280, 100%, 65%));
+  background-size: var(--glittersize) var(--glittersize), 300% 300%;
+  background-position:
+    center,
+    calc(25% + (var(--pointer-x) / 2)) calc(25% + (var(--pointer-y) / 2));
+  background-blend-mode: overlay;
+  filter: brightness(1.05) contrast(1.4) saturate(1.5);
+}
+
+[data-holo="rainbow"] .holo-glare {
+  background-image: radial-gradient(circle at var(--pointer-x) var(--pointer-y),
+      rgba(255, 255, 255, 0.7) 0%,
+      rgba(180, 200, 200, 0.15) 35%,
+      transparent 80%);
+}
+
+/* ─── COSMOS (starfield + rainbow) ─── */
+[data-holo="cosmos"] .holo-shine {
+  background-image:
+    url("/holo/cosmos-bottom.png"),
+    repeating-linear-gradient(82deg,
+      hsl(53, 80%, 60%), hsl(93, 70%, 55%), hsl(176, 70%, 55%),
+      hsl(228, 75%, 62%), hsl(283, 75%, 62%), hsl(326, 75%, 58%),
+      hsl(283, 75%, 62%), hsl(228, 75%, 62%), hsl(176, 70%, 55%),
+      hsl(93, 70%, 55%), hsl(53, 80%, 60%));
+  background-size: cover, 300% 700%;
+  background-position:
+    center,
+    calc(10% + (var(--pointer-from-left) * 80%)) calc(10% + (var(--pointer-from-top) * 80%));
+  background-blend-mode: color-dodge;
+  filter: brightness(1.1) contrast(1.3) saturate(1.1);
+}
+
+[data-holo="cosmos"] .holo-glare {
+  background-image: radial-gradient(circle at var(--pointer-x) var(--pointer-y),
+      rgba(200, 240, 255, 0.85) 5%,
+      rgba(60, 40, 90, 0.2) 60%,
+      transparent 100%);
+}
+
+/* ─── RADIANT (cross-hatch diffraction) ─── */
+[data-holo="radiant"] .holo-shine {
+  --bar: 1.4%;
+  background-image:
+    repeating-linear-gradient(45deg,
+      hsl(0, 0%, 20%) 0%, hsl(0, 0%, 55%) calc(var(--bar) * 2),
+      hsl(0, 0%, 90%) calc(var(--bar) * 4), hsl(0, 0%, 55%) calc(var(--bar) * 6),
+      hsl(0, 0%, 20%) calc(var(--bar) * 8)),
+    repeating-linear-gradient(-45deg,
+      hsl(280, 60%, 30%) 0%, hsl(190, 70%, 55%) calc(var(--bar) * 2),
+      hsl(50, 90%, 70%) calc(var(--bar) * 4), hsl(330, 70%, 55%) calc(var(--bar) * 6),
+      hsl(280, 60%, 30%) calc(var(--bar) * 8));
+  background-size: 200% 200%, 200% 200%;
+  background-position:
+    calc(((var(--background-x) - 50%) * 1.5) + 50%) calc(((var(--background-y) - 50%) * 1.5) + 50%),
+    calc(((var(--background-x) - 50%) * -1.5) + 50%) calc(((var(--background-y) - 50%) * -1.5) + 50%);
+  background-blend-mode: color-dodge;
+  filter: brightness(0.9) contrast(1.4) saturate(1.4);
+}
+
+[data-holo="radiant"] .holo-glare {
+  background-image: radial-gradient(circle at var(--pointer-x) var(--pointer-y),
+      rgba(255, 255, 255, 0.6) 0%,
+      rgba(120, 120, 120, 0.15) 45%,
+      transparent 90%);
+}
+
+/* ─── SECRET GOLD ─── */
+[data-holo="secret"] .holo-shine {
+  background-image:
+    var(--glitter),
+    conic-gradient(from 0deg at 50% 50%,
+      hsl(46, 95%, 55%), hsl(52, 100%, 72%), hsl(40, 90%, 50%),
+      hsl(52, 100%, 72%), hsl(46, 95%, 55%));
+  background-size: var(--glittersize) var(--glittersize), cover;
+  background-position:
+    calc(var(--pointer-from-left) * 100%) calc(var(--pointer-from-top) * 100%),
+    center;
+  background-blend-mode: overlay;
+  filter: brightness(1.1) contrast(1.2) saturate(1.6);
+}
+
+[data-holo="secret"] .holo-glare {
+  background-image: radial-gradient(circle at var(--pointer-x) var(--pointer-y),
+      rgba(255, 240, 200, 0.8) 0%,
+      rgba(180, 140, 60, 0.2) 40%,
+      transparent 85%);
+}
+
+/* ─── GALAXY GLOW ─── */
+[data-holo="galaxy"] .holo-shine {
+  background-image:
+    radial-gradient(circle at var(--pointer-x) var(--pointer-y),
+      rgba(200, 130, 255, 0.7) 0%,
+      rgba(90, 140, 255, 0.45) 25%,
+      rgba(90, 230, 255, 0.3) 45%,
+      transparent 80%),
+    var(--glitter);
+  background-size: cover, var(--glittersize) var(--glittersize);
+  background-position:
+    center,
+    calc(var(--pointer-from-left) * 100%) calc(var(--pointer-from-top) * 100%);
+  background-blend-mode: overlay;
+  filter: brightness(1.15) contrast(1.3) saturate(1.4);
+}
+
+[data-holo="galaxy"] .holo-glare {
+  background-image: radial-gradient(circle at var(--pointer-x) var(--pointer-y),
+      rgba(230, 210, 255, 0.7) 5%,
+      rgba(80, 60, 140, 0.25) 55%,
+      transparent 100%);
+}

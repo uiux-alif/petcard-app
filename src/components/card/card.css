@@ -1,0 +1,1553 @@
+/* ============================================================
+   PetCard Rendering Engine — visual styles
+   Ported 1:1 from the original MVP. The renderer is a pure
+   visual engine: props in, DOM out. No app logic here.
+   ============================================================ */
+
+.card-scene {
+  perspective: 1000px;
+  cursor: pointer;
+  user-select: none;
+  /* Holo pointer defaults — inherited by the .pet-card overlays.
+     The pointer hook / review slider override these inline. */
+  --rotate-x: 0deg;
+  --rotate-y: 0deg;
+  --pointer-x: 50%;
+  --pointer-y: 50%;
+  --pointer-from-center: 0;
+  --pointer-from-top: 0.5;
+  --pointer-from-left: 0.5;
+  --background-x: 50%;
+  --background-y: 50%;
+  --card-opacity: 0;
+  --holo-strength: 0.7;
+}
+
+.card-wrap {
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateY(var(--rotate-x)) rotateX(var(--rotate-y));
+  transition: transform 0.1s ease;
+  will-change: transform;
+}
+
+/* ─── Card frame ─── */
+.pet-card {
+  width: 320px;
+  height: 448px;
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  /* contain holo mix-blend-modes to the card */
+  font-family: var(--font-card-sans), "DM Sans", sans-serif;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 24px 60px rgba(0, 0, 0, 0.6);
+  user-select: none;
+}
+
+/* Type-based gradient backgrounds */
+.pet-card[data-type="electric"] {
+  background: linear-gradient(160deg, #1a1400 0%, #2d2100 30%, #3d2f00 60%, #1a1400 100%);
+}
+
+.pet-card[data-type="fire"] {
+  background: linear-gradient(160deg, #1a0800 0%, #2d1200 30%, #3d1a00 60%, #1a0800 100%);
+}
+
+.pet-card[data-type="water"] {
+  background: linear-gradient(160deg, #001226 0%, #001e3d 30%, #002952 60%, #001226 100%);
+}
+
+.pet-card[data-type="grass"] {
+  background: linear-gradient(160deg, #001a08 0%, #002912 30%, #003818 60%, #001a08 100%);
+}
+
+.pet-card[data-type="psychic"] {
+  background: linear-gradient(160deg, #1a0026 0%, #2a003d 30%, #380052 60%, #1a0026 100%);
+}
+
+.pet-card[data-type="dark"] {
+  background: linear-gradient(160deg, #0a0a0a 0%, #141414 30%, #1a1a1a 60%, #0a0a0a 100%);
+}
+
+.pet-card[data-type="ice"] {
+  background: linear-gradient(160deg, #001a2e 0%, #002e4a 30%, #003d5c 60%, #001a2e 100%);
+}
+
+.pet-card[data-type="dragon"] {
+  background: linear-gradient(160deg, #0d1a26 0%, #162940 30%, #1e3854 60%, #0d1a26 100%);
+}
+
+/* ─── Foil / hologram layer ─── */
+.card-foil {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.03) 30%,
+      rgba(255, 255, 255, 0.06) 35%,
+      rgba(255, 255, 255, 0.03) 40%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.03) 60%,
+      rgba(255, 255, 255, 0.06) 65%,
+      rgba(255, 255, 255, 0.03) 70%,
+      transparent 80%);
+  pointer-events: none;
+  z-index: 10;
+  mix-blend-mode: screen;
+  transition: opacity 0.3s;
+  opacity: 0;
+}
+
+.pet-card:hover .card-foil,
+.card-scene.holo .card-foil {
+  opacity: 1;
+}
+
+/* ─── Rainbow holo refraction ─── */
+.card-rainbow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(from 0deg at 50% 50%,
+      rgba(255, 80, 80, 0) 0deg,
+      rgba(255, 80, 80, 0.06) 30deg,
+      rgba(255, 200, 80, 0.06) 60deg,
+      rgba(80, 255, 80, 0.06) 90deg,
+      rgba(80, 200, 255, 0.06) 120deg,
+      rgba(80, 80, 255, 0.06) 150deg,
+      rgba(200, 80, 255, 0.06) 180deg,
+      rgba(255, 80, 200, 0.06) 210deg,
+      rgba(255, 80, 80, 0.06) 240deg,
+      rgba(255, 200, 80, 0.06) 270deg,
+      rgba(80, 255, 80, 0.06) 300deg,
+      rgba(80, 200, 255, 0.06) 330deg,
+      rgba(255, 80, 80, 0) 360deg);
+  pointer-events: none;
+  z-index: 9;
+  opacity: 0;
+  transition: opacity 0.3s;
+  mix-blend-mode: screen;
+}
+
+.pet-card:hover .card-rainbow,
+.card-scene.holo .card-rainbow {
+  opacity: 1;
+}
+
+/* ─── Shimmer sweep ─── */
+.card-shimmer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.12) 50%,
+      rgba(255, 255, 255, 0.06) 52%,
+      transparent 62%);
+  pointer-events: none;
+  z-index: 11;
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.pet-card:hover .card-shimmer {
+  transform: translateX(100%);
+}
+
+/* ─── Inner layout ─── */
+.card-inner {
+  position: relative;
+  z-index: 5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+}
+
+/* Top bar */
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.card-stage {
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.card-name-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+}
+
+.card-name {
+  font-family: var(--font-card-sans), "DM Sans", sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.02em;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.card-hp-row {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.card-hp-num {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.card-hp-label {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.06em;
+}
+
+/* Image area */
+.card-img-wrap {
+  flex-shrink: 0;
+  height: 155px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.card-img-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+}
+
+.card-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.card-img-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 36px;
+}
+
+.card-img-placeholder span {
+  font-size: 12px;
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.12);
+}
+
+/* Info bar */
+.card-info-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.card-species {
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-type-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+/* Moves */
+.card-moves {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow: hidden;
+}
+
+.card-move {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  min-height: 38px;
+}
+
+.move-cost-dots {
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.cost-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.move-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.move-name {
+  font-family: var(--font-card-sans), "DM Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.move-damage {
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  min-width: 30px;
+  text-align: right;
+}
+
+/* Bottom */
+.card-bottom {
+  margin-top: auto;
+  padding-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.card-flavor {
+  font-size: 8.5px;
+  color: rgba(255, 255, 255, 0.25);
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.card-weakness-row {
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.2);
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  margin-top: 3px;
+}
+
+.card-number {
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.2);
+  text-align: right;
+}
+
+/* Rarity stars */
+.card-rarity {
+  display: flex;
+  gap: 2px;
+  justify-content: flex-end;
+  margin-bottom: 2px;
+}
+
+.rarity-star {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.rarity-star.lit {
+  color: #fbbf24;
+  text-shadow: 0 0 4px rgba(251, 191, 36, 0.6);
+}
+
+/* Type colors — cost dots + type badge */
+.pet-card[data-type="electric"] .cost-dot {
+  background: #eab308;
+}
+
+.pet-card[data-type="electric"] .card-type-badge {
+  background: rgba(234, 179, 8, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(234, 179, 8, 0.25);
+}
+
+.pet-card[data-type="fire"] .cost-dot {
+  background: #ef4444;
+}
+
+.pet-card[data-type="fire"] .card-type-badge {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.pet-card[data-type="water"] .cost-dot {
+  background: #3b82f6;
+}
+
+.pet-card[data-type="water"] .card-type-badge {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.pet-card[data-type="grass"] .cost-dot {
+  background: #22c55e;
+}
+
+.pet-card[data-type="grass"] .card-type-badge {
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.pet-card[data-type="psychic"] .cost-dot {
+  background: #a855f7;
+}
+
+.pet-card[data-type="psychic"] .card-type-badge {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.25);
+}
+
+.pet-card[data-type="dark"] .cost-dot {
+  background: #6b7280;
+}
+
+.pet-card[data-type="dark"] .card-type-badge {
+  background: rgba(107, 114, 128, 0.15);
+  color: #9ca3af;
+  border: 1px solid rgba(107, 114, 128, 0.25);
+}
+
+.pet-card[data-type="ice"] .cost-dot {
+  background: #06b6d4;
+}
+
+.pet-card[data-type="ice"] .card-type-badge {
+  background: rgba(6, 182, 212, 0.15);
+  color: #22d3ee;
+  border: 1px solid rgba(6, 182, 212, 0.25);
+}
+
+.pet-card[data-type="dragon"] .cost-dot {
+  background: #6366f1;
+}
+
+.pet-card[data-type="dragon"] .card-type-badge {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+}
+
+/* Name glow per type */
+.pet-card[data-type="electric"] .card-name {
+  text-shadow: 0 0 20px rgba(250, 191, 36, 0.3);
+}
+
+.pet-card[data-type="fire"] .card-name {
+  text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+.pet-card[data-type="water"] .card-name {
+  text-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+}
+
+.pet-card[data-type="grass"] .card-name {
+  text-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+}
+
+.pet-card[data-type="psychic"] .card-name {
+  text-shadow: 0 0 20px rgba(192, 132, 252, 0.3);
+}
+
+.pet-card[data-type="ice"] .card-name {
+  text-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+}
+
+.pet-card[data-type="dragon"] .card-name {
+  text-shadow: 0 0 20px rgba(129, 140, 248, 0.3);
+}
+
+/* Border glow on hover per type */
+.pet-card[data-type="electric"]:hover {
+  box-shadow: 0 0 0 1px rgba(250, 191, 36, 0.25), 0 0 30px rgba(250, 191, 36, 0.12), 0 24px 60px rgba(0, 0, 0, 0.7) !important;
+}
+
+.pet-card[data-type="fire"]:hover {
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.25), 0 0 30px rgba(239, 68, 68, 0.12), 0 24px 60px rgba(0, 0, 0, 0.7) !important;
+}
+
+.pet-card[data-type="water"]:hover {
+  box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.25), 0 0 30px rgba(96, 165, 250, 0.12), 0 24px 60px rgba(0, 0, 0, 0.7) !important;
+}
+
+.pet-card[data-type="grass"]:hover {
+  box-shadow: 0 0 0 1px rgba(74, 222, 128, 0.25), 0 0 30px rgba(74, 222, 128, 0.12), 0 24px 60px rgba(0, 0, 0, 0.7) !important;
+}
+
+.pet-card[data-type="psychic"]:hover {
+  box-shadow: 0 0 0 1px rgba(192, 132, 252, 0.25), 0 0 30px rgba(192, 132, 252, 0.12), 0 24px 60px rgba(0, 0, 0, 0.7) !important;
+}
+
+.pet-card[data-type="dark"]:hover {
+  box-shadow: 0 0 0 1px rgba(107, 114, 128, 0.25), 0 0 30px rgba(107, 114, 128, 0.12), 0 24px 60px rgba(0, 0, 0, 0.7) !important;
+}
+
+.pet-card[data-type="ice"]:hover {
+  box-shadow: 0 0 0 1px rgba(6, 182, 212, 0.25), 0 0 30px rgba(6, 182, 212, 0.12), 0 24px 60px rgba(0, 0, 0, 0.7) !important;
+}
+
+.pet-card[data-type="dragon"]:hover {
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.25), 0 0 30px rgba(99, 102, 241, 0.12), 0 24px 60px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* ─── Compact variant (grid views) ─── */
+.pet-card.compact {
+  width: 220px;
+  height: 308px;
+  border-radius: 14px;
+}
+
+.pet-card.compact .card-inner {
+  padding: 9px;
+}
+
+.pet-card.compact .card-name {
+  font-size: 13px;
+  max-width: 110px;
+}
+
+.pet-card.compact .card-hp-num {
+  font-size: 13px;
+}
+
+.pet-card.compact .card-img-wrap {
+  height: 104px;
+}
+
+.pet-card.compact .card-img-placeholder {
+  font-size: 26px;
+}
+
+.pet-card.compact .move-name {
+  font-size: 10px;
+}
+
+.pet-card.compact .move-damage {
+  font-size: 13px;
+}
+
+.pet-card.compact .card-move {
+  min-height: 30px;
+  padding: 5px 8px;
+}
+
+.pet-card.compact .cost-dot {
+  width: 9px;
+  height: 9px;
+}
+
+/* ============================================================
+   NEO TEMPLATE
+   Same .pet-card frame + type gradient + holo layers, but a
+   full-bleed photo with an overlaid header and a frosted panel.
+   ============================================================ */
+
+.neo-inner {
+  position: relative;
+  z-index: 5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Full-bleed photo fills the whole card */
+.neo-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.neo-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.neo-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+  color: rgba(255, 255, 255, 0.12);
+}
+
+.neo-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom,
+      rgba(0, 0, 0, 0.55) 0%,
+      rgba(0, 0, 0, 0.1) 28%,
+      rgba(0, 0, 0, 0.15) 48%,
+      rgba(0, 0, 0, 0.85) 100%);
+}
+
+/* Overlaid header */
+.neo-header {
+  position: relative;
+  z-index: 2;
+  padding: 14px 14px 0;
+}
+
+.neo-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.neo-stage {
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 99px;
+  color: rgba(255, 255, 255, 0.85);
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.neo-type-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  backdrop-filter: blur(6px);
+}
+
+.neo-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.neo-name {
+  margin: 0;
+  font-family: var(--font-card-sans), "DM Sans", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: #fff;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.neo-hp {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.neo-hp-num {
+  font-family: var(--font-card-sans), "DM Sans", sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+}
+
+.neo-hp-label {
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.neo-species {
+  margin: 4px 0 0;
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.65);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* Frosted content panel pinned to the bottom */
+.neo-panel {
+  position: relative;
+  z-index: 2;
+  margin: auto 10px 10px;
+  padding: 10px;
+  border-radius: 14px;
+  background: rgba(10, 10, 12, 0.5);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.neo-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.neo-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 5px 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.neo-stat-label {
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 7.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.neo-stat-val {
+  font-family: var(--font-card-sans), "DM Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.neo-moves {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.neo-move {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.neo-move-name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-card-sans), "DM Sans", sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.neo-move-dmg {
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.neo-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+.neo-footer-left {
+  min-width: 0;
+}
+
+.neo-flavor {
+  margin: 0 0 2px;
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 170px;
+}
+
+.neo-weakness {
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.neo-footer-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.neo-number {
+  font-family: var(--font-card-mono), "JetBrains Mono", monospace;
+  font-size: 8.5px;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* Neo type-badge colors reuse the type theme */
+.pet-card[data-type="electric"] .neo-type-badge {
+  background: rgba(234, 179, 8, 0.22);
+  color: #fde68a;
+}
+
+.pet-card[data-type="fire"] .neo-type-badge {
+  background: rgba(239, 68, 68, 0.22);
+  color: #fca5a5;
+}
+
+.pet-card[data-type="water"] .neo-type-badge {
+  background: rgba(59, 130, 246, 0.22);
+  color: #93c5fd;
+}
+
+.pet-card[data-type="grass"] .neo-type-badge {
+  background: rgba(34, 197, 94, 0.22);
+  color: #86efac;
+}
+
+.pet-card[data-type="psychic"] .neo-type-badge {
+  background: rgba(168, 85, 247, 0.22);
+  color: #d8b4fe;
+}
+
+.pet-card[data-type="dark"] .neo-type-badge {
+  background: rgba(107, 114, 128, 0.22);
+  color: #d1d5db;
+}
+
+.pet-card[data-type="ice"] .neo-type-badge {
+  background: rgba(6, 182, 212, 0.22);
+  color: #67e8f9;
+}
+
+.pet-card[data-type="dragon"] .neo-type-badge {
+  background: rgba(99, 102, 241, 0.22);
+  color: #a5b4fc;
+}
+
+/* Neo cost dots inherit the per-type color already defined for .cost-dot */
+
+/* Compact tweaks for Neo */
+.pet-card.compact .neo-name {
+  font-size: 18px;
+}
+
+.pet-card.compact .neo-hp-num {
+  font-size: 16px;
+}
+
+.pet-card.compact .neo-header {
+  padding: 10px 10px 0;
+}
+
+.pet-card.compact .neo-panel {
+  margin: auto 8px 8px;
+  padding: 8px;
+  gap: 6px;
+}
+
+.pet-card.compact .neo-stat-val {
+  font-size: 12px;
+}
+
+.pet-card.compact .neo-move-name {
+  font-size: 10px;
+}
+
+.pet-card.compact .neo-move-dmg {
+  font-size: 13px;
+}
+
+.pet-card.compact .neo-move {
+  padding: 4px 7px;
+}
+
+/* ─── Accessibility ─── */
+.card-scene:focus-visible {
+  outline: 2px solid var(--color-primary, #4ade80);
+  outline-offset: 6px;
+  border-radius: 18px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .card-wrap,
+  .card-foil,
+  .card-rainbow,
+  .card-shimmer {
+    transition: none !important;
+  }
+
+  .card-shimmer {
+    /* keep the sweep from animating on hover */
+    transform: translateX(-100%) !important;
+  }
+}
+
+/* ============================================================
+   MINIMAL TEMPLATE — quiet, typographic, lots of whitespace
+   ============================================================ */
+.min-inner {
+  position: relative;
+  z-index: 5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 18px 16px;
+  gap: 12px;
+  background: #0d0d0f;
+}
+
+.min-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.min-head-left {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.min-type-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--min-accent, #fff);
+}
+
+.min-stage {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.min-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.min-name {
+  margin: 0;
+  font-family: var(--font-card-sans), sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #fff;
+}
+
+.min-species {
+  margin: 0;
+  font-family: var(--font-card-mono), monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.min-photo {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.min-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  color: rgba(255, 255, 255, 0.12);
+}
+
+.min-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 4px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.min-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.min-stat-val {
+  font-family: var(--font-card-sans), sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.min-stat-label {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 7.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.min-moves {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.min-move {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-family: var(--font-card-sans), sans-serif;
+}
+
+.min-move-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.min-move-dmg {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.min-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  font-family: var(--font-card-mono), monospace;
+  font-size: 8px;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.pet-card[data-type="electric"] .min-type-dot {
+  --min-accent: #fbbf24;
+}
+
+.pet-card[data-type="fire"] .min-type-dot {
+  --min-accent: #f87171;
+}
+
+.pet-card[data-type="water"] .min-type-dot {
+  --min-accent: #60a5fa;
+}
+
+.pet-card[data-type="grass"] .min-type-dot {
+  --min-accent: #4ade80;
+}
+
+.pet-card[data-type="psychic"] .min-type-dot {
+  --min-accent: #c084fc;
+}
+
+.pet-card[data-type="dark"] .min-type-dot {
+  --min-accent: #9ca3af;
+}
+
+.pet-card[data-type="ice"] .min-type-dot {
+  --min-accent: #22d3ee;
+}
+
+.pet-card[data-type="dragon"] .min-type-dot {
+  --min-accent: #818cf8;
+}
+
+.pet-card.compact .min-name {
+  font-size: 19px;
+}
+
+.pet-card.compact .min-inner {
+  padding: 12px;
+  gap: 8px;
+}
+
+.pet-card.compact .min-stat-val {
+  font-size: 13px;
+}
+
+/* ============================================================
+   RETRO TEMPLATE — chunky arcade frame, bold borders, pixel vibe
+   ============================================================ */
+.pet-card[data-template="retro"] {
+  background: #16121f !important;
+}
+
+.retro-inner {
+  position: relative;
+  z-index: 5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  gap: 8px;
+  font-family: var(--font-card-mono), monospace;
+}
+
+.retro-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  background: var(--retro-accent, #eab308);
+  color: #16121f;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.retro-name {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.retro-hp {
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.retro-photo {
+  position: relative;
+  height: 150px;
+  flex-shrink: 0;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  overflow: hidden;
+  background: #0a0810;
+}
+
+.retro-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: rgba(255, 255, 255, 0.14);
+}
+
+.retro-stage-tag {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 2px 6px;
+  background: #000;
+  color: var(--retro-accent, #eab308);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.retro-subbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.retro-species {
+  font-size: 8.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.retro-type {
+  font-size: 8.5px;
+  font-weight: 700;
+  color: var(--retro-accent, #eab308);
+  flex-shrink: 0;
+}
+
+.retro-moves {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.retro-move {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid #000;
+}
+
+.retro-move-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.retro-move-dmg {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--retro-accent, #eab308);
+}
+
+.retro-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.retro-flavor {
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.retro-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.retro-number {
+  font-size: 8.5px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.pet-card[data-type="electric"] .retro-inner {
+  --retro-accent: #fbbf24;
+}
+
+.pet-card[data-type="fire"] .retro-inner {
+  --retro-accent: #f87171;
+}
+
+.pet-card[data-type="water"] .retro-inner {
+  --retro-accent: #60a5fa;
+}
+
+.pet-card[data-type="grass"] .retro-inner {
+  --retro-accent: #4ade80;
+}
+
+.pet-card[data-type="psychic"] .retro-inner {
+  --retro-accent: #c084fc;
+}
+
+.pet-card[data-type="dark"] .retro-inner {
+  --retro-accent: #9ca3af;
+}
+
+.pet-card[data-type="ice"] .retro-inner {
+  --retro-accent: #22d3ee;
+}
+
+.pet-card[data-type="dragon"] .retro-inner {
+  --retro-accent: #818cf8;
+}
+
+.pet-card.compact .retro-photo {
+  height: 100px;
+}
+
+.pet-card.compact .retro-name {
+  font-size: 11px;
+}
+
+/* ============================================================
+   POLAROID TEMPLATE — instant-photo frame + caption strip
+   ============================================================ */
+.pet-card[data-template="polaroid"] {
+  background: linear-gradient(160deg, #1a1a1d 0%, #232327 100%) !important;
+}
+
+.pol-inner {
+  position: relative;
+  z-index: 5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 10px;
+}
+
+.pol-frame {
+  background: #f7f4ec;
+  padding: 8px 8px 0;
+  border-radius: 3px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+  transform: rotate(-1.4deg);
+}
+
+.pol-photo {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+  background: #0a0810;
+}
+
+.pol-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: rgba(0, 0, 0, 0.18);
+}
+
+.pol-hp {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-family: var(--font-card-mono), monospace;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.pol-stage {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.85);
+  color: #111;
+  font-family: var(--font-card-mono), monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.pol-caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 4px 12px;
+  text-align: center;
+}
+
+.pol-name {
+  font-family: "Comic Sans MS", "Segoe Print", var(--font-card-sans), cursive;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1d;
+  line-height: 1;
+}
+
+.pol-species {
+  font-family: "Comic Sans MS", "Segoe Print", var(--font-card-sans), cursive;
+  font-size: 10px;
+  color: #6b6b6b;
+  margin-top: 2px;
+}
+
+.pol-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 2px;
+}
+
+.pol-moves {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+}
+
+.pol-move {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 9px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pol-move-name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-card-sans), sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pol-move-dmg {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.pol-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pol-type {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.pol-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pol-number {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 8.5px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.pet-card.compact .pol-photo {
+  height: 104px;
+}
+
+.pet-card.compact .pol-name {
+  font-size: 15px;
+}
+
+.pet-card.compact .pol-move-name {
+  font-size: 10px;
+}
