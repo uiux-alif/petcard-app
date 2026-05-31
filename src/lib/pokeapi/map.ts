@@ -1,4 +1,4 @@
-import type { CardData, CardType, RarityLevel, HoloEffectId, CardTemplate, CardMove } from "@/types/card"
+import type { CardData, CardType, RarityLevel, HoloEffectId, CardTemplate, CardMove, CardStage } from "@/types/card"
 import { clamp } from "@/lib/card/utils"
 
 /** Subset of the PokeAPI /pokemon response we actually consume. */
@@ -65,6 +65,28 @@ function pokeRarity(p: PokeApiPokemon): RarityLevel {
   return 1
 }
 
+/**
+ * Derive a card stage. PokéAPI doesn't expose evolution stage on /pokemon, but
+ * total base stats correlate well with how "evolved" a Pokémon is — so we map
+ * rarity → stage with a small id-based jitter so consecutive dex entries don't
+ * all look identical. Deterministic per pokemon id.
+ */
+function pokeStage(p: PokeApiPokemon, rarity: RarityLevel): CardStage {
+  const jitter = p.id % 4 // 0..3, deterministic per dex id
+  switch (rarity) {
+    case 5:
+      return "EX"
+    case 4:
+      return "STAGE 2"
+    case 3:
+      return jitter < 3 ? "STAGE 1" : "STAGE 2"
+    case 2:
+      return jitter < 2 ? "BASIC" : "STAGE 1"
+    default:
+      return jitter === 0 ? "BABY" : "BASIC"
+  }
+}
+
 function titleCase(s: string): string {
   return s
     .split("-")
@@ -102,12 +124,13 @@ function pokeMoves(p: PokeApiPokemon): [CardMove, CardMove] {
  */
 export function pokemonToCard(p: PokeApiPokemon): CardData {
   const name = titleCase(p.name)
+  const rarity = pokeRarity(p)
   return {
     name,
     species: `No. ${String(p.id).padStart(3, "0")} · ${titleCase(pokeType(p))} Pokémon`,
-    stage: "BASIC",
+    stage: pokeStage(p, rarity),
     type: pokeType(p),
-    rarity: pokeRarity(p),
+    rarity,
     imageUrl: artwork(p),
     stats: {
       hp: clamp(Math.round(statValue(p, "hp") / 10) * 10, 30, 250),

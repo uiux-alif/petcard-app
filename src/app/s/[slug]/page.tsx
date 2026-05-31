@@ -5,7 +5,7 @@ import { ArrowRight, Heart } from "lucide-react"
 import { fetchCardBySlug } from "@/lib/card/queries"
 import { fetchPokemonCardBySlug } from "@/lib/pokeapi/fetch"
 import { PetCard } from "@/components/card/renderer"
-import { CopyLinkButton } from "@/components/card/CopyLinkButton"
+import { ShareCardButton } from "@/components/card/ShareCardButton"
 import { getRarityConfig, getTypeConfig } from "@/lib/card/utils"
 import { Button } from "@/components/ui/button"
 import type { PetCardRecord } from "@/types/card"
@@ -101,21 +101,30 @@ export default async function SharePage({ params }: SharePageProps) {
           <p className="mt-2 text-sm text-muted-foreground">
             The collectible trading-card studio for pets. Turn your own pet into a legendary card.
           </p>
-          <Button asChild size="lg" className="mt-4 w-full font-bold">
+
+          {/* Primary share action — Web Share API on mobile, clipboard fallback. */}
+          <ShareCardButton
+            path={`/s/${card.slug}`}
+            title={`${card.name} · made with PetCard`}
+            text={`Check out ${card.name}, a ${type.label.toLowerCase()} card I found on PetCard.`}
+            size="lg"
+            variant="default"
+            className="mt-4 w-full"
+          />
+
+          <Button asChild size="lg" variant="outline" className="mt-2 w-full font-bold">
             <Link href="/create">
               Create your own now <ArrowRight className="h-4 w-4" />
             </Link>
           </Button>
-          <div className="mt-3 flex items-center justify-between">
+
+          <div className="mt-3 text-center">
             <Link
               href={`/c/${card.slug}`}
               className="text-xs text-muted-foreground hover:text-foreground"
             >
               View full card details →
             </Link>
-            <CopyLinkButton path={`/c/${card.slug}`} size="sm" variant="ghost">
-              Copy link
-            </CopyLinkButton>
           </div>
         </div>
       </div>

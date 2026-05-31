@@ -52,7 +52,7 @@ test.describe("public share flow", () => {
     expect(context).toBeTruthy()
   })
 
-  test("/s/[slug] renders the branded share page with CTA and copy link", async ({ page }) => {
+  test("/s/[slug] renders branded share page with proper Share button + CTA", async ({ page }) => {
     await page.goto("/s/pokedex-bulbasaur")
 
     // The pet's name is the page H1 (scope to level-1 to avoid colliding with
@@ -64,7 +64,22 @@ test.describe("public share flow", () => {
     await expect(main.getByText(/made with/i)).toBeVisible()
     await expect(main.locator(".rainbow-text", { hasText: "PetCard" })).toBeVisible()
 
-    // CTA links to the editor.
+    // Primary share button — first-class button now (was a small ghost copy link before).
+    const shareBtn = page.getByRole("button", { name: /share this card/i })
+    await expect(shareBtn).toBeVisible()
+
+    // Force the clipboard fallback path: stub navigator.share so the click
+    // exercises the same code real desktop browsers without Web Share API hit.
+    await page.evaluate(() => {
+      Object.defineProperty(navigator, "share", { value: undefined, configurable: true })
+    })
+    await shareBtn.click()
+    await expect(page.getByText(/Link copied/i)).toBeVisible()
+    const clip = await page.evaluate(() => navigator.clipboard.readText())
+    // The share button shares the canonical /s/<slug> page (this URL).
+    expect(clip).toMatch(/\/s\/pokedex-bulbasaur$/)
+
+    // Secondary CTA links to the editor.
     const cta = page.getByRole("link", { name: /Create your own now/i })
     await expect(cta).toHaveAttribute("href", "/create")
 
@@ -73,11 +88,20 @@ test.describe("public share flow", () => {
       "href",
       "/c/pokedex-bulbasaur",
     )
+  })
 
-    // Copy-link button copies the /c/<slug> URL (the canonical card page).
-    await page.getByRole("button", { name: /Copy link/i }).click()
-    await expect(page.getByText(/Link copied/i)).toBeVisible()
-    const clip = await page.evaluate(() => navigator.clipboard.readText())
-    expect(clip).toMatch(/\/c\/pokedex-bulbasaur$/)
+  test("PokéAPI cards render varied stages (not all BASIC)", async ({ page }) => {
+    // Charizard (id 6, total 534) → rarity 4 → always STAGE 2.
+    // Each template uses its own stage class; assert by text within the card.
+    await page.goto("/c/pokedex-charizard")
+    const charCard = page.locator(".pet-card").first()
+    await expect(charCard).toBeVisible()
+    await expect(charCard.getByText("STAGE 2", { exact: true }).first()).toBeVisible()
+
+    // Mewtwo (id 150, total 680) → rarity 5 → always EX.
+    await page.goto("/c/pokedex-mewtwo")
+    const mewCard = page.locator(".pet-card").first()
+    await expect(mewCard).toBeVisible()
+    await expect(mewCard.getByText("EX", { exact: true }).first()).toBeVisible()
   })
 })
