@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Download, RotateCcw, Loader2, Save, Globe, ZoomIn, ZoomOut, Maximize } from "lucide-react"
 import type { CardData } from "@/types/card"
@@ -33,6 +33,7 @@ export function CardEditor({ cardId, initialCard, initialPublic = false }: CardE
   const router = useRouter()
   const { enabled, user } = useAuth()
   const cardRef = useRef<HTMLDivElement>(null)
+  const previewRef = useRef<HTMLDivElement>(null)
   const [saving, setSaving] = useState(false)
   const [zoom, setZoom] = useState(1)
 
@@ -40,6 +41,21 @@ export function CardEditor({ cardId, initialCard, initialPublic = false }: CardE
   const zoomIn = () => setZoom((z) => clampZoom(z + ZOOM_STEP))
   const zoomOut = () => setZoom((z) => clampZoom(z - ZOOM_STEP))
   const zoomReset = () => setZoom(1)
+
+  // Ctrl/⌘ + wheel (or plain wheel over the preview) zooms the card. We attach a
+  // native non-passive listener so we can preventDefault and stop the page from
+  // scrolling while zooming.
+  useEffect(() => {
+    const el = previewRef.current
+    if (!el) return
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault()
+      const delta = e.deltaY < 0 ? ZOOM_STEP : -ZOOM_STEP
+      setZoom((z) => clampZoom(z + delta))
+    }
+    el.addEventListener("wheel", onWheel, { passive: false })
+    return () => el.removeEventListener("wheel", onWheel)
+  }, [])
 
   const isEditing = Boolean(cardId)
 
@@ -153,7 +169,10 @@ export function CardEditor({ cardId, initialCard, initialPublic = false }: CardE
       </div>
 
       {/* Preview panel */}
-      <div className="relative flex items-center justify-center overflow-hidden bg-background p-10">
+      <div
+        ref={previewRef}
+        className="relative flex items-center justify-center overflow-hidden bg-background p-10"
+      >
         <div
           className="pointer-events-none absolute inset-0"
           style={{
@@ -211,7 +230,7 @@ export function CardEditor({ cardId, initialCard, initialPublic = false }: CardE
         </div>
 
         <p className="absolute bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] tracking-wide text-muted-foreground/60">
-          Hover or drag to rotate · Click for holo mode · Scroll buttons to zoom
+          Hover to rotate · Scroll to zoom · Export captures the hologram
         </p>
       </div>
     </div>
