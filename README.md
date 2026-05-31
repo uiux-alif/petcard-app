@@ -1,5 +1,7 @@
 # PetCard
 
+[![CI](https://github.com/uiux-alif/petcard-app/actions/workflows/ci.yml/badge.svg)](https://github.com/uiux-alif/petcard-app/actions/workflows/ci.yml)
+
 > The Canva for collectible pet cards.
 
 PetCard is a web platform for creating collectible trading-card-style cards for your pets. Upload a photo, pick a type, tune stats and rarity, design moves, and export a high-res holographic card as PNG.
@@ -109,7 +111,21 @@ Team docs live in [`docs/`](./docs):
 - [`ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — renderer + holo system deep dive
 - [`CONTRIBUTING.md`](./docs/CONTRIBUTING.md) — workflow + recipes (add a template/effect)
 - [`ROADMAP.md`](./docs/ROADMAP.md) — what's shipped + prioritized backlog
+- [`DEPLOYMENT.md`](./docs/DEPLOYMENT.md) — Vercel + Supabase deploy runbook
 - [`supabase/README.md`](./supabase/README.md) — apply the database schema
+
+---
+
+## Testing
+
+```bash
+npm run test       # unit tests (Vitest) — pure functions: mappers, pokeapi, utils
+npm run test:watch # watch mode
+npm run test:e2e   # e2e smoke tests (Playwright) — runs against a prod build
+```
+
+CI runs lint, typecheck, unit tests, build, and the Playwright smoke suite on
+every push/PR to `main`.
 
 ---
 
