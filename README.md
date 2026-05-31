@@ -96,17 +96,26 @@ npm run db:seed             # load demo cards
 
 - **8 types** — electric, fire, water, grass, psychic, dark, ice, dragon (each with gradient + color theme)
 - **5 rarities** — Common, Uncommon, Rare, SR (holo), SAR (super holo)
-- **Effects** — 3D tilt, foil tracking, rainbow refraction, shimmer sweep, per-type glow
+- **5 templates** — Classic, Neo, Minimal, Retro, Polaroid
+- **9 holo effects** — pointer-tracked shine + glare, adjustable strength, idle breathing
+
+---
+
+## Documentation
+
+Team docs live in [`docs/`](./docs):
+
+- [`HANDOFF.md`](./docs/HANDOFF.md) — start here; get productive in 15 minutes
+- [`ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — renderer + holo system deep dive
+- [`CONTRIBUTING.md`](./docs/CONTRIBUTING.md) — workflow + recipes (add a template/effect)
+- [`ROADMAP.md`](./docs/ROADMAP.md) — what's shipped + prioritized backlog
+- [`supabase/README.md`](./supabase/README.md) — apply the database schema
 
 ---
 
 ## Roadmap
 
-- **Sprint 1 (done)** — Card templates: Classic + Neo, shared fields, editor picker
-- **Sprint 2 (done)** — Persistence loop: `/create/[id]` edit, delete-with-confirm, per-user likes (optimistic), data-URL stripped from persisted JSON
-- **Sprint 3 (done)** — Discovery & profiles: `/u/[username]`, `/c/[slug]` card detail, OG images, community load-more pagination
-- **Sprint 4 (done)** — Auth & onboarding: email/password + Google, confirm/resend flow, `/settings` profile (username, bio, avatar)
-- **Sprint 5 (done)** — Hardening: reduced-motion + keyboard a11y, error boundary, not-found, loading skeletons, SEO metadata
+See [`docs/ROADMAP.md`](./docs/ROADMAP.md) for full sprint history and the backlog.
 
 ### Deploy (Vercel)
 
