@@ -8,7 +8,10 @@ export type CardStage = "BABY" | "BASIC" | "STAGE 1" | "STAGE 2" | "EX"
 export type RarityLevel = 1 | 2 | 3 | 4 | 5
 
 // Visual template the card is rendered with. Same fields, different layout.
-export type CardTemplate = "classic" | "neo" | "minimal" | "retro" | "polaroid"
+export type CardTemplate =
+  | "classic" | "neo" | "minimal" | "retro" | "polaroid"
+  | "aurora" | "midnight" | "sticker" | "blueprint" | "vapor"
+  | "comic" | "kraft" | "neon" | "royal" | "terminal"
 
 // Holographic effect overlay (ported from pokemon-cards-css).
 export type HoloEffectId =
@@ -21,6 +24,9 @@ export type HoloEffectId =
   | "radiant"
   | "secret"
   | "galaxy"
+
+// Card display font (user-selectable per card).
+export type CardFont = "classic" | "anton" | "bebas" | "baloo" | "outfit" | "russo"
 
 // ─── Data Types ───
 export interface CardMove {
@@ -53,6 +59,8 @@ export interface CardData {
   holo?: HoloEffectId
   /** Holo effect intensity 0–1. Optional; defaults to 0.7. */
   holoStrength?: number
+  /** Display font for the card's name/text. Optional; defaults to "classic". */
+  font?: CardFont
 }
 
 // ─── Config Types (not data) ───

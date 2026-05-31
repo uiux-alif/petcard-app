@@ -2,12 +2,13 @@
 
 import type { CSSProperties } from "react"
 import type { CardData, HoloEffectId } from "@/types/card"
-import { DEFAULT_TEMPLATE } from "@/lib/card/constants"
+import { DEFAULT_TEMPLATE, CARD_FONTS, DEFAULT_FONT } from "@/lib/card/constants"
 import { DEFAULT_HOLO } from "@/lib/card/holo-effects"
 import { useHoloPointer } from "@/hooks/use-holo-pointer"
 import { renderTemplate } from "./templates"
 import { cn } from "@/lib/utils"
 import "../card.css"
+import "../templates.css"
 import "../holo.css"
 
 export interface PetCardProps {
@@ -75,9 +76,11 @@ export function PetCard({
     ...opacityOverride,
   } as CSSProperties
 
-  const cardStyle: CSSProperties | undefined = idleAnim
-    ? { animationDelay: `${breatheDelay}ms` }
-    : undefined
+  const cardStyle: CSSProperties = {
+    // Per-card display font overrides the shared --font-card-sans variable.
+    "--font-card-sans": CARD_FONTS[card.font ?? DEFAULT_FONT].stack,
+    ...(idleAnim ? { animationDelay: `${breatheDelay}ms` } : {}),
+  } as CSSProperties
 
   return (
     <div

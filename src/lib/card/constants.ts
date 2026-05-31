@@ -6,6 +6,7 @@ import type {
   CardData,
   CardStage,
   CardTemplate,
+  CardFont,
 } from "@/types/card"
 
 export const CARD_TYPES: Record<CardType, TypeConfig> = {
@@ -198,10 +199,113 @@ export const CARD_TEMPLATES: Record<CardTemplate, TemplateMeta> = {
     label: "Polaroid",
     description: "Snapshot photo with a handwritten caption strip.",
   },
+  aurora: {
+    id: "aurora",
+    label: "Aurora",
+    description: "Soft gradient glass with a wide hero photo.",
+  },
+  midnight: {
+    id: "midnight",
+    label: "Midnight",
+    description: "Deep dark slab with a glowing accent rail.",
+  },
+  sticker: {
+    id: "sticker",
+    label: "Sticker",
+    description: "Die-cut white outline like a vinyl sticker.",
+  },
+  blueprint: {
+    id: "blueprint",
+    label: "Blueprint",
+    description: "Technical schematic grid with mono labels.",
+  },
+  vapor: {
+    id: "vapor",
+    label: "Vaporwave",
+    description: "Sunset gradient + grid, 80s retro-future.",
+  },
+  comic: {
+    id: "comic",
+    label: "Comic",
+    description: "Bold inked panel with halftone energy.",
+  },
+  kraft: {
+    id: "kraft",
+    label: "Kraft",
+    description: "Warm paper texture, stamped & taped look.",
+  },
+  neon: {
+    id: "neon",
+    label: "Neon",
+    description: "Dark arcade with electric outline glow.",
+  },
+  royal: {
+    id: "royal",
+    label: "Royal",
+    description: "Ornate gold-framed premium presentation.",
+  },
+  terminal: {
+    id: "terminal",
+    label: "Terminal",
+    description: "Green-on-black hacker console readout.",
+  },
 }
 
 export const DEFAULT_TEMPLATE: CardTemplate = "classic"
 
+export interface FontMeta {
+  id: CardFont
+  label: string
+  /** CSS font-family stack for this font option. */
+  stack: string
+  /** A short word describing the vibe, shown in the picker. */
+  vibe: string
+}
+
+/**
+ * Card display fonts. `stack` references the CSS variables registered in
+ * app/layout.tsx via next/font. "classic" is the default DM Sans look.
+ */
+export const CARD_FONTS: Record<CardFont, FontMeta> = {
+  classic: {
+    id: "classic",
+    label: "Classic",
+    stack: "var(--font-card-sans), 'DM Sans', sans-serif",
+    vibe: "Clean & friendly",
+  },
+  anton: {
+    id: "anton",
+    label: "Impact",
+    stack: "var(--font-anton), 'Arial Narrow', sans-serif",
+    vibe: "Bold TCG headline",
+  },
+  bebas: {
+    id: "bebas",
+    label: "Condensed",
+    stack: "var(--font-bebas), 'Oswald', sans-serif",
+    vibe: "Tall & punchy",
+  },
+  russo: {
+    id: "russo",
+    label: "Arcade",
+    stack: "var(--font-russo), 'Trebuchet MS', sans-serif",
+    vibe: "Chunky & techy",
+  },
+  baloo: {
+    id: "baloo",
+    label: "Rounded",
+    stack: "var(--font-baloo), 'Comic Sans MS', cursive",
+    vibe: "Soft & playful",
+  },
+  outfit: {
+    id: "outfit",
+    label: "Modern",
+    stack: "var(--font-outfit), system-ui, sans-serif",
+    vibe: "Sleek geometric",
+  },
+}
+
+export const DEFAULT_FONT: CardFont = "classic"
 export const CARD_DEFAULTS: CardData = {
   name: "Pet Name",
   species: "Species · Breed",

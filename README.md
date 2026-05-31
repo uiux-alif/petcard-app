@@ -98,7 +98,8 @@ npm run db:seed             # load demo cards
 
 - **8 types** — electric, fire, water, grass, psychic, dark, ice, dragon (each with gradient + color theme)
 - **5 rarities** — Common, Uncommon, Rare, SR (holo), SAR (super holo)
-- **5 templates** — Classic, Neo, Minimal, Retro, Polaroid
+- **15 templates** — Classic, Neo, Minimal, Retro, Polaroid, Aurora, Midnight, Sticker, Blueprint, Vaporwave, Comic, Kraft, Neon, Royal, Terminal
+- **6 fonts** — Classic, Impact, Condensed, Arcade, Rounded, Modern
 - **9 holo effects** — pointer-tracked shine + glare, adjustable strength, idle breathing
 
 ---

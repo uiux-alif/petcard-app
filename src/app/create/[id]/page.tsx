@@ -35,6 +35,8 @@ export default async function EditCardPage({ params }: EditPageProps) {
     cardNumber: record.cardNumber,
     template: record.template,
     holo: record.holo,
+    holoStrength: record.holoStrength,
+    font: record.font,
   }
 
   return <CardEditor cardId={id} initialCard={cardData} initialPublic={record.isPublic} />

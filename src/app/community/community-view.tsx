@@ -16,9 +16,16 @@ interface CommunityViewProps {
   likedIds?: string[]
   /** When true, like buttons toggle against Supabase + load-more is enabled. */
   interactive?: boolean
+  /** How many of the leading cards are real user-published cards. */
+  userCardCount?: number
 }
 
-export function CommunityView({ cards: initialCards, likedIds = [], interactive = false }: CommunityViewProps) {
+export function CommunityView({
+  cards: initialCards,
+  likedIds = [],
+  interactive = false,
+  userCardCount = 0,
+}: CommunityViewProps) {
   const [cards, setCards] = useState(initialCards)
   const [likedSetIds, setLikedSetIds] = useState(likedIds)
   const [page, setPage] = useState(0)
@@ -54,6 +61,10 @@ export function CommunityView({ cards: initialCards, likedIds = [], interactive 
         break
       case "likes":
         list.sort((a, b) => b.likesCount - a.likesCount)
+        break
+      case "newest":
+        // Real user cards (current timestamps) naturally lead the synthetic feed.
+        list.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         break
       default:
         break
@@ -95,7 +106,9 @@ export function CommunityView({ cards: initialCards, likedIds = [], interactive 
           Welcome to the <span className="rainbow-text">Community</span>
         </h1>
         <p className="mt-3 text-muted-foreground">
-          Discover amazing pet cards created by fellow trainers
+          {userCardCount > 0
+            ? `${userCardCount} card${userCardCount === 1 ? "" : "s"} from real trainers, plus a Pokédex to explore`
+            : "Discover amazing pet cards created by fellow trainers"}
         </p>
       </div>
 

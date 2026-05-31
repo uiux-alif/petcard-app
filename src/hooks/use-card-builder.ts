@@ -10,6 +10,7 @@ import type {
   RarityLevel,
   CardTemplate,
   HoloEffectId,
+  CardFont,
 } from "@/types/card"
 import { CARD_DEFAULTS } from "@/lib/card/constants"
 import { clamp, getExportFileName } from "@/lib/card/utils"
@@ -90,18 +91,28 @@ export function useCardBuilder(initial?: Partial<CardData>) {
     (strength: number) => updateField("holoStrength", clamp(strength, 0, 1)),
     [updateField],
   )
+  const setFont = useCallback(
+    (font: CardFont) => updateField("font", font),
+    [updateField],
+  )
 
   const randomizeStyle = useCallback(() => {
-    const templates: CardTemplate[] = ["classic", "neo", "minimal", "retro", "polaroid"]
+    const templates: CardTemplate[] = [
+      "classic", "neo", "minimal", "retro", "polaroid",
+      "aurora", "midnight", "sticker", "blueprint", "vapor",
+      "comic", "kraft", "neon", "royal", "terminal",
+    ]
     const holos: HoloEffectId[] = [
       "basic", "reverse", "regular", "rainbow", "cosmos", "radiant", "secret", "galaxy",
     ]
+    const fonts: CardFont[] = ["classic", "anton", "bebas", "baloo", "outfit", "russo"]
     const pick = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)]!
     setCardData((prev) => ({
       ...prev,
       template: pick(templates),
       holo: pick(holos),
       holoStrength: Math.round((0.5 + Math.random() * 0.5) * 100) / 100,
+      font: pick(fonts),
     }))
     setIsDirty(true)
   }, [])
@@ -132,6 +143,7 @@ export function useCardBuilder(initial?: Partial<CardData>) {
     setTemplate,
     setHolo,
     setHoloStrength,
+    setFont,
     randomizeStyle,
     reset,
     exportFileName,

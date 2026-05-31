@@ -1,6 +1,14 @@
 import "./globals.css"
 import type { Metadata } from "next"
-import { JetBrains_Mono, DM_Sans } from "next/font/google"
+import {
+  JetBrains_Mono,
+  DM_Sans,
+  Anton,
+  Bebas_Neue,
+  Baloo_2,
+  Outfit,
+  Russo_One,
+} from "next/font/google"
 import { ThemeProvider } from "next-themes"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ToastProvider } from "@/components/providers/toast-provider"
@@ -17,6 +25,39 @@ const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-card-sans",
 })
+
+// ─── Card display fonts (user-selectable per card) ───
+const anton = Anton({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-anton",
+})
+const bebasNeue = Bebas_Neue({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-bebas",
+})
+const baloo2 = Baloo_2({
+  subsets: ["latin"],
+  variable: "--font-baloo",
+})
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
+})
+const russoOne = Russo_One({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-russo",
+})
+
+const cardFontVars = cn(
+  anton.variable,
+  bebasNeue.variable,
+  baloo2.variable,
+  outfit.variable,
+  russoOne.variable,
+)
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
@@ -50,6 +91,7 @@ export default function RootLayout({
           "min-h-screen bg-background font-mono antialiased",
           jetbrainsMono.variable,
           dmSans.variable,
+          cardFontVars,
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>

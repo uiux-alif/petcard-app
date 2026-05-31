@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import type { Metadata } from "next"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, Wand2 } from "lucide-react"
 import { fetchCardBySlug, hasLikedCard } from "@/lib/card/queries"
 import { fetchPokemonCardBySlug } from "@/lib/pokeapi/fetch"
 import { PetCard } from "@/components/card/renderer"
@@ -112,6 +112,17 @@ export default async function CardDetailPage({ params }: CardPageProps) {
             </Link>
             <LikeButton cardId={card.id} initialLikes={card.likesCount} initialLiked={liked} />
             <span className="font-mono text-xs text-muted-foreground">#{card.cardNumber}</span>
+          </div>
+
+          <div className="pt-2">
+            <Button asChild size="lg" className="font-bold">
+              <Link href={`/create?remix=${card.slug}`}>
+                <Wand2 className="h-4 w-4" /> Remix this card
+              </Link>
+            </Button>
+            <p className="mt-2 text-xs text-muted-foreground">
+              Opens this card in the editor as a new draft — tweak it and make it yours.
+            </p>
           </div>
         </div>
       </div>

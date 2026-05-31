@@ -1,0 +1,465 @@
+/* ============================================================
+   Themed templates (StyledTemplate) — shared structure
+   Personality per template comes from the skin blocks below,
+   keyed off .pet-card[data-template="…"].
+   ============================================================ */
+
+.st-inner {
+  position: relative;
+  z-index: 5;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 14px;
+  gap: 9px;
+  --st-fg: #fff;
+  --st-muted: rgba(255, 255, 255, 0.55);
+  --st-faint: rgba(255, 255, 255, 0.35);
+  --st-panel: rgba(255, 255, 255, 0.06);
+  --st-border: rgba(255, 255, 255, 0.12);
+  --st-accent: #ffffff;
+  --st-radius: 10px;
+  color: var(--st-fg);
+}
+
+.st-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.st-stage {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--st-muted);
+  padding: 2px 7px;
+  border-radius: 99px;
+  border: 1px solid var(--st-border);
+  background: var(--st-panel);
+  flex-shrink: 0;
+}
+
+.st-name {
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-card-sans), sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--st-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.st-hp {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.st-hp-num {
+  font-family: var(--font-card-sans), sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--st-accent);
+}
+
+.st-hp-label {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 8px;
+  color: var(--st-muted);
+}
+
+.st-photo {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: var(--st-radius);
+  overflow: hidden;
+  background: var(--st-panel);
+  border: 1px solid var(--st-border);
+}
+
+.st-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  color: var(--st-faint);
+}
+
+.st-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.st-species {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 9px;
+  letter-spacing: 0.03em;
+  color: var(--st-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.st-type {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--st-accent);
+  flex-shrink: 0;
+}
+
+.st-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.st-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 4px 0;
+  border-radius: 7px;
+  background: var(--st-panel);
+  border: 1px solid var(--st-border);
+}
+
+.st-stat-label {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 7px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--st-faint);
+}
+
+.st-stat-val {
+  font-family: var(--font-card-sans), sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--st-fg);
+}
+
+.st-moves {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.st-move {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  background: var(--st-panel);
+  border: 1px solid var(--st-border);
+}
+
+.st-move-name {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-card-sans), sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--st-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.st-move-dmg {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--st-accent);
+}
+
+.st-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.st-footer-left {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.st-flavor {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 8px;
+  color: var(--st-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 165px;
+}
+
+.st-weakness {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 8px;
+  color: var(--st-faint);
+}
+
+.st-footer-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.st-number {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 8.5px;
+  color: var(--st-faint);
+}
+
+.pet-card.compact .st-inner {
+  padding: 10px;
+  gap: 6px;
+}
+
+.pet-card.compact .st-name {
+  font-size: 14px;
+}
+
+.pet-card.compact .st-stat-val {
+  font-size: 11px;
+}
+
+.pet-card.compact .st-move-name {
+  font-size: 10px;
+}
+
+/* ─── AURORA — soft gradient glass ─── */
+.pet-card[data-template="aurora"] {
+  background: linear-gradient(150deg, #1b2a4a 0%, #3a2a5c 45%, #1f3b4d 100%) !important;
+}
+
+.pet-card[data-template="aurora"] .st-inner {
+  --st-accent: #a5f3fc;
+  --st-panel: rgba(255, 255, 255, 0.08);
+  --st-border: rgba(255, 255, 255, 0.16);
+  --st-radius: 14px;
+  backdrop-filter: blur(2px);
+}
+
+.pet-card[data-template="aurora"] .st-stat,
+.pet-card[data-template="aurora"] .st-move {
+  backdrop-filter: blur(6px);
+}
+
+/* ─── MIDNIGHT — dark slab + glowing rail ─── */
+.pet-card[data-template="midnight"] {
+  background: #0b0b10 !important;
+}
+
+.pet-card[data-template="midnight"] .st-inner {
+  --st-accent: #818cf8;
+  --st-panel: rgba(129, 140, 248, 0.08);
+  --st-border: rgba(129, 140, 248, 0.2);
+  border-left: 3px solid var(--st-accent);
+  padding-left: 16px;
+}
+
+.pet-card[data-template="midnight"] .st-name {
+  text-shadow: 0 0 14px rgba(129, 140, 248, 0.5);
+}
+
+/* ─── STICKER — die-cut white outline ─── */
+.pet-card[data-template="sticker"] {
+  background: #101014 !important;
+  border: 5px solid #fff !important;
+  border-radius: 22px !important;
+}
+
+.pet-card[data-template="sticker"] .st-inner {
+  --st-accent: #fde047;
+  --st-fg: #fff;
+  --st-panel: rgba(255, 255, 255, 0.07);
+  --st-border: rgba(255, 255, 255, 0.9);
+}
+
+.pet-card[data-template="sticker"] .st-photo {
+  border: 2px solid #fff;
+}
+
+/* ─── BLUEPRINT — technical schematic ─── */
+.pet-card[data-template="blueprint"] {
+  background:
+    repeating-linear-gradient(0deg, transparent 0 19px, rgba(255, 255, 255, 0.05) 19px 20px),
+    repeating-linear-gradient(90deg, transparent 0 19px, rgba(255, 255, 255, 0.05) 19px 20px),
+    #0a2540 !important;
+}
+
+.pet-card[data-template="blueprint"] .st-inner {
+  --st-accent: #7dd3fc;
+  --st-fg: #e0f2fe;
+  --st-muted: rgba(224, 242, 254, 0.6);
+  --st-faint: rgba(224, 242, 254, 0.4);
+  --st-panel: rgba(125, 211, 252, 0.07);
+  --st-border: rgba(125, 211, 252, 0.35);
+  --st-radius: 2px;
+}
+
+.pet-card[data-template="blueprint"] .st-name {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 16px;
+  letter-spacing: 0.04em;
+}
+
+/* ─── VAPORWAVE — sunset grid ─── */
+.pet-card[data-template="vapor"] {
+  background: linear-gradient(180deg, #2b1055 0%, #7597de 60%, #ff6ad5 100%) !important;
+}
+
+.pet-card[data-template="vapor"] .st-inner {
+  --st-accent: #fdf4ff;
+  --st-fg: #fff;
+  --st-panel: rgba(255, 255, 255, 0.12);
+  --st-border: rgba(255, 255, 255, 0.3);
+}
+
+.pet-card[data-template="vapor"] .st-name {
+  text-shadow: 2px 2px 0 #ff6ad5, -1px -1px 0 #26c6da;
+}
+
+.pet-card[data-template="vapor"] .st-photo {
+  border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+/* ─── COMIC — inked panel ─── */
+.pet-card[data-template="comic"] {
+  background: #fdf6e3 !important;
+  border: 3px solid #111 !important;
+}
+
+.pet-card[data-template="comic"] .st-inner {
+  --st-accent: #e11d48;
+  --st-fg: #111;
+  --st-muted: rgba(0, 0, 0, 0.6);
+  --st-faint: rgba(0, 0, 0, 0.45);
+  --st-panel: #fff;
+  --st-border: #111;
+}
+
+.pet-card[data-template="comic"] .st-name {
+  font-family: var(--font-card-sans), sans-serif;
+  text-transform: uppercase;
+}
+
+.pet-card[data-template="comic"] .st-stat,
+.pet-card[data-template="comic"] .st-move,
+.pet-card[data-template="comic"] .st-photo {
+  border-width: 2px;
+  box-shadow: 2px 2px 0 #111;
+}
+
+/* ─── KRAFT — warm paper ─── */
+.pet-card[data-template="kraft"] {
+  background: #c8a97e !important;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.08) 1px, transparent 1px) !important;
+  background-size: 4px 4px !important;
+}
+
+.pet-card[data-template="kraft"] .st-inner {
+  --st-accent: #7c2d12;
+  --st-fg: #3b2412;
+  --st-muted: rgba(59, 36, 18, 0.65);
+  --st-faint: rgba(59, 36, 18, 0.5);
+  --st-panel: rgba(255, 250, 240, 0.45);
+  --st-border: rgba(59, 36, 18, 0.3);
+}
+
+.pet-card[data-template="kraft"] .st-stage {
+  background: #3b2412;
+  color: #f5e6d3;
+}
+
+/* ─── NEON — arcade outline glow ─── */
+.pet-card[data-template="neon"] {
+  background: #07070d !important;
+  border: 2px solid #f0f !important;
+  box-shadow: 0 0 20px rgba(255, 0, 255, 0.4), inset 0 0 20px rgba(255, 0, 255, 0.15) !important;
+}
+
+.pet-card[data-template="neon"] .st-inner {
+  --st-accent: #0ff;
+  --st-fg: #fff;
+  --st-panel: rgba(0, 255, 255, 0.06);
+  --st-border: rgba(0, 255, 255, 0.4);
+}
+
+.pet-card[data-template="neon"] .st-name {
+  color: #0ff;
+  text-shadow: 0 0 8px #0ff, 0 0 16px rgba(0, 255, 255, 0.5);
+}
+
+/* ─── ROYAL — ornate gold frame ─── */
+.pet-card[data-template="royal"] {
+  background: linear-gradient(160deg, #2a1a08 0%, #4a3410 50%, #2a1a08 100%) !important;
+  border: 3px solid #d4af37 !important;
+  box-shadow: inset 0 0 0 2px rgba(212, 175, 55, 0.4), 0 24px 60px rgba(0, 0, 0, 0.6) !important;
+}
+
+.pet-card[data-template="royal"] .st-inner {
+  --st-accent: #f5d77a;
+  --st-fg: #f5e9c8;
+  --st-muted: rgba(245, 233, 200, 0.6);
+  --st-faint: rgba(245, 233, 200, 0.4);
+  --st-panel: rgba(212, 175, 55, 0.1);
+  --st-border: rgba(212, 175, 55, 0.45);
+}
+
+.pet-card[data-template="royal"] .st-name {
+  color: #f5d77a;
+  letter-spacing: 0.02em;
+}
+
+/* ─── TERMINAL — hacker console ─── */
+.pet-card[data-template="terminal"] {
+  background: #020a02 !important;
+  border: 1px solid #1f3d1f !important;
+}
+
+.pet-card[data-template="terminal"] .st-inner {
+  --st-accent: #4ade80;
+  --st-fg: #86efac;
+  --st-muted: rgba(74, 222, 128, 0.6);
+  --st-faint: rgba(74, 222, 128, 0.4);
+  --st-panel: rgba(74, 222, 128, 0.05);
+  --st-border: rgba(74, 222, 128, 0.3);
+  --st-radius: 2px;
+  font-family: var(--font-card-mono), monospace;
+}
+
+.pet-card[data-template="terminal"] .st-name,
+.pet-card[data-template="terminal"] .st-move-name,
+.pet-card[data-template="terminal"] .st-stat-val,
+.pet-card[data-template="terminal"] .st-hp-num {
+  font-family: var(--font-card-mono), monospace;
+}
+
+.pet-card[data-template="terminal"] .st-name::before {
+  content: "> ";
+  color: #4ade80;
+}

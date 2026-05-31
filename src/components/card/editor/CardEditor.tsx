@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Download, RotateCcw, Loader2, Save, Globe } from "lucide-react"
+import { Download, RotateCcw, Loader2, Save, Globe, ZoomIn, ZoomOut, Maximize } from "lucide-react"
 import type { CardData } from "@/types/card"
 import { useCardBuilder } from "@/hooks/use-card-builder"
 import { useCardExport } from "@/hooks/use-card-export"
@@ -12,6 +12,10 @@ import { CardEditorPanel } from "@/components/card/editor/CardEditorPanel"
 import { PetCard } from "@/components/card/renderer"
 import { Button } from "@/components/ui/button"
 import { saveCard, updateCard } from "@/lib/card/actions"
+
+const ZOOM_MIN = 0.5
+const ZOOM_MAX = 2
+const ZOOM_STEP = 0.1
 
 interface CardEditorProps {
   /** When set, the editor is in "edit" mode for this card id. */
@@ -30,6 +34,12 @@ export function CardEditor({ cardId, initialCard, initialPublic = false }: CardE
   const { enabled, user } = useAuth()
   const cardRef = useRef<HTMLDivElement>(null)
   const [saving, setSaving] = useState(false)
+  const [zoom, setZoom] = useState(1)
+
+  const clampZoom = (z: number) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(z * 100) / 100))
+  const zoomIn = () => setZoom((z) => clampZoom(z + ZOOM_STEP))
+  const zoomOut = () => setZoom((z) => clampZoom(z - ZOOM_STEP))
+  const zoomReset = () => setZoom(1)
 
   const isEditing = Boolean(cardId)
 
@@ -100,6 +110,7 @@ export function CardEditor({ cardId, initialCard, initialPublic = false }: CardE
           onTemplate={builder.setTemplate}
           onHolo={builder.setHolo}
           onHoloStrength={builder.setHoloStrength}
+          onFont={builder.setFont}
           onRandomize={builder.randomizeStyle}
         />
 
@@ -150,9 +161,57 @@ export function CardEditor({ cardId, initialCard, initialPublic = false }: CardE
               "radial-gradient(ellipse 60% 60% at 50% 40%, rgba(74,222,128,0.05) 0%, transparent 70%)",
           }}
         />
-        <PetCard card={builder.cardData} tilt cardRef={cardRef} />
+
+        {/* Zoom controls */}
+        <div className="absolute right-5 top-5 z-10 flex items-center gap-1 rounded-lg border border-border bg-card/80 p-1 backdrop-blur">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={zoomOut}
+            disabled={zoom <= ZOOM_MIN}
+            title="Zoom out"
+          >
+            <ZoomOut className="h-4 w-4" />
+          </Button>
+          <button
+            onClick={zoomReset}
+            className="min-w-[44px] rounded px-1 font-mono text-xs text-muted-foreground hover:text-foreground"
+            title="Reset zoom"
+          >
+            {Math.round(zoom * 100)}%
+          </button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={zoomIn}
+            disabled={zoom >= ZOOM_MAX}
+            title="Zoom in"
+          >
+            <ZoomIn className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={zoomReset}
+            title="Fit"
+          >
+            <Maximize className="h-4 w-4" />
+          </Button>
+        </div>
+
+        {/* Zoomed card */}
+        <div
+          className="transition-transform duration-200"
+          style={{ transform: `scale(${zoom})` }}
+        >
+          <PetCard card={builder.cardData} tilt cardRef={cardRef} />
+        </div>
+
         <p className="absolute bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[10px] tracking-wide text-muted-foreground/60">
-          Hover or drag to rotate · Click for holo mode
+          Hover or drag to rotate · Click for holo mode · Scroll buttons to zoom
         </p>
       </div>
     </div>

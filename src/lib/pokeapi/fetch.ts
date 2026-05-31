@@ -25,6 +25,10 @@ export async function fetchPokemon(idOrName: number | string): Promise<PokeApiPo
 /** Turn a fetched Pokémon into a community PetCardRecord. */
 function toRecord(p: PokeApiPokemon): PetCardRecord {
   const card = pokemonToCard(p)
+  // Anchor synthetic cards to a fixed point in the past so any real
+  // user-published card (current timestamps) always sorts above them in the
+  // "newest" view, while still ordering the dex feed by id among themselves.
+  const POKE_EPOCH = Date.UTC(2020, 0, 1)
   return {
     ...card,
     id: `poke-${p.id}`,
@@ -33,7 +37,7 @@ function toRecord(p: PokeApiPokemon): PetCardRecord {
     ownerAvatar: OWNER_AVATARS[p.id % OWNER_AVATARS.length]!,
     isPublic: true,
     likesCount: (p.stats.reduce((s, x) => s + x.base_stat, 0) % 300) + 12,
-    createdAt: new Date(Date.now() - p.id * 3600_000).toISOString(),
+    createdAt: new Date(POKE_EPOCH - p.id * 60_000).toISOString(),
   }
 }
 

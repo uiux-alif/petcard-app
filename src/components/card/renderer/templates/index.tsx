@@ -5,10 +5,20 @@ import { NeoTemplate } from "./NeoTemplate"
 import { MinimalTemplate } from "./MinimalTemplate"
 import { RetroTemplate } from "./RetroTemplate"
 import { PolaroidTemplate } from "./PolaroidTemplate"
+import { StyledTemplate } from "./StyledTemplate"
+
+// Templates that share the StyledTemplate markup, differentiated by CSS.
+const STYLED: CardTemplate[] = [
+  "aurora", "midnight", "sticker", "blueprint", "vapor",
+  "comic", "kraft", "neon", "royal", "terminal",
+]
 
 /** Render the inner layout for a card's template (falls back to default). */
 export function renderTemplate(card: CardData) {
   const template: CardTemplate = card.template ?? DEFAULT_TEMPLATE
+
+  if (STYLED.includes(template)) return <StyledTemplate card={card} />
+
   switch (template) {
     case "neo":
       return <NeoTemplate card={card} />
@@ -24,4 +34,4 @@ export function renderTemplate(card: CardData) {
   }
 }
 
-export { ClassicTemplate, NeoTemplate, MinimalTemplate, RetroTemplate, PolaroidTemplate }
+export { ClassicTemplate, NeoTemplate, MinimalTemplate, RetroTemplate, PolaroidTemplate, StyledTemplate }

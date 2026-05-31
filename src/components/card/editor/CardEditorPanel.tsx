@@ -1,6 +1,6 @@
 "use client"
 
-import type { CardData, CardStage, CardType, RarityLevel, CardStats, CardMove, CardTemplate, HoloEffectId } from "@/types/card"
+import type { CardData, CardStage, CardType, RarityLevel, CardStats, CardMove, CardTemplate, HoloEffectId, CardFont } from "@/types/card"
 import type { CharCounts } from "@/hooks/use-card-builder"
 import { CARD_STAGES } from "@/lib/card/constants"
 import { Shuffle } from "lucide-react"
@@ -19,6 +19,7 @@ import {
 import { EditorSection } from "./EditorSection"
 import { TemplateSelector } from "./TemplateSelector"
 import { HoloSelector } from "./HoloSelector"
+import { FontSelector } from "./FontSelector"
 import { TypeSelector } from "./TypeSelector"
 import { RaritySelector } from "./RaritySelector"
 import { StatSlider } from "./StatSlider"
@@ -37,13 +38,14 @@ interface CardEditorPanelProps {
   onTemplate: (template: CardTemplate) => void
   onHolo: (holo: HoloEffectId) => void
   onHoloStrength: (strength: number) => void
+  onFont: (font: CardFont) => void
   onRandomize: () => void
 }
 
 export function CardEditorPanel(props: CardEditorPanelProps) {
   const {
     card, charCounts, onField, onStat, onMove, onType, onStage, onRarity, onImage,
-    onTemplate, onHolo, onHoloStrength, onRandomize,
+    onTemplate, onHolo, onHoloStrength, onFont, onRandomize,
   } = props
 
   const strengthPct = Math.round((card.holoStrength ?? 0.7) * 100)
@@ -63,6 +65,11 @@ export function CardEditorPanel(props: CardEditorPanelProps) {
       {/* Template */}
       <EditorSection title="Template">
         <TemplateSelector value={card.template ?? "classic"} onChange={onTemplate} />
+      </EditorSection>
+
+      {/* Font */}
+      <EditorSection title="Font">
+        <FontSelector value={card.font ?? "classic"} onChange={onFont} />
       </EditorSection>
 
       {/* Holographic effect */}
