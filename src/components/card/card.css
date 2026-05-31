@@ -425,6 +425,106 @@
   text-shadow: 0 0 4px rgba(251, 191, 36, 0.6);
 }
 
+/* ─── Rarity label + row (label sits left of the stars) ─── */
+.card-rarity-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  margin-bottom: 2px;
+}
+
+.card-rarity {
+  /* override the standalone defaults when inside the row */
+  margin-bottom: 0;
+}
+
+.rarity-label {
+  font-family: var(--font-card-mono), monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+}
+
+/* SR — gold shimmer */
+.rarity-label-sr {
+  color: #fff;
+  background: linear-gradient(90deg, #fde68a, #fbbf24, #f59e0b, #fde68a);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rarity-sr-shimmer 3s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.5));
+}
+
+.rarity-stars-sr .rarity-star.lit {
+  color: #fbbf24;
+  text-shadow: 0 0 6px rgba(251, 191, 36, 0.9);
+}
+
+@keyframes rarity-sr-shimmer {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* SAR — full rainbow, the heboh one */
+.rarity-label-sar {
+  font-weight: 800;
+  background: linear-gradient(90deg,
+      #ff6b9d, #fbbf24, #4ade80, #22d3ee, #818cf8, #c084fc, #ff6b9d);
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rarity-sar-rainbow 2.4s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(255, 107, 157, 0.55));
+}
+
+.rarity-stars-sar .rarity-star.lit {
+  background: linear-gradient(90deg,
+      #ff6b9d, #fbbf24, #4ade80, #22d3ee, #818cf8, #c084fc, #ff6b9d);
+  background-size: 250% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;
+  animation: rarity-sar-rainbow 2.4s linear infinite, rarity-sar-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes rarity-sar-rainbow {
+  to {
+    background-position: 250% center;
+  }
+}
+
+@keyframes rarity-sar-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 3px rgba(255, 107, 157, 0.6));
+  }
+
+  50% {
+    transform: scale(1.18);
+    filter: drop-shadow(0 0 8px rgba(192, 132, 252, 0.9));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .rarity-label-sr,
+  .rarity-label-sar,
+  .rarity-stars-sar .rarity-star.lit {
+    animation: none;
+  }
+}
+
 /* Type colors — cost dots + type badge */
 .pet-card[data-type="electric"] .cost-dot {
   background: #eab308;

@@ -16,6 +16,18 @@ test.describe("editor interactions", () => {
     await expect(readout).not.toHaveText("100%")
   })
 
+  test("rarity label shows next to the stars and SAR gets the rainbow treatment", async ({ page }) => {
+    await page.goto("/create")
+    // Default rarity is Common — the label should render on the card.
+    await expect(page.locator(".rarity-label").first()).toHaveText(/common/i)
+
+    // Bump to SAR (rarity 5) via the rarity picker.
+    await page.getByRole("button", { name: /SAR/ }).click()
+    const sar = page.locator(".rarity-label-sar").first()
+    await expect(sar).toBeVisible()
+    await expect(sar).toHaveText(/SAR/)
+  })
+
   test("export downloads a non-empty PNG", async ({ page }) => {
     await page.goto("/create")
     // Pick a holo effect so the export has something to freeze.
