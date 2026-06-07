@@ -7,6 +7,7 @@ import { fetchPokemonCardBySlug } from "@/lib/pokeapi/fetch"
 import { PetCard } from "@/components/card/renderer"
 import { LikeButton } from "@/components/card/LikeButton"
 import { CopyLinkButton } from "@/components/card/CopyLinkButton"
+import { ReportCardButton } from "@/components/card/ReportCardButton"
 import { getRarityConfig, getTypeConfig } from "@/lib/card/utils"
 import { Button } from "@/components/ui/button"
 import type { PetCardRecord } from "@/types/card"
@@ -113,6 +114,7 @@ export default async function CardDetailPage({ params }: CardPageProps) {
             </Link>
             <LikeButton cardId={card.id} initialLikes={card.likesCount} initialLiked={liked} />
             <span className="font-mono text-xs text-muted-foreground">#{card.cardNumber}</span>
+            <ReportCardButton cardId={card.id} />
           </div>
 
           <div className="pt-2">

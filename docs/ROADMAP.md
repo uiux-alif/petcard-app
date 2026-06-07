@@ -19,6 +19,12 @@
   profiles (`/u/[username]`), card detail (`/c/[slug]`) with dynamic OG images.
 - **Landing** — multi-section marketing page with community showcase + open
   source credits.
+- **Free + donations** — PetCard is free forever; an optional "Buy me a coffee"
+  donation link (footer + header), configurable via `NEXT_PUBLIC_DONATE_URL`.
+- **Trust & safety** — Terms + Privacy pages, GDPR self-service account deletion,
+  per-user card reporting (`card_reports` table + RLS), hardened image-upload
+  validation (MIME allowlist), and best-effort rate limiting on mutating actions.
+- **SEO/PWA** — `robots.txt`, `sitemap.xml`, and an installable web manifest.
 - **Ops** — CI (lint/typecheck/build), Vercel config, handoff docs.
 
 ## Backlog (prioritized)

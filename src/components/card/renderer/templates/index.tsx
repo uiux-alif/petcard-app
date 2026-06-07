@@ -11,6 +11,7 @@ import { StyledTemplate } from "./StyledTemplate"
 const STYLED: CardTemplate[] = [
   "aurora", "midnight", "sticker", "blueprint", "vapor",
   "comic", "kraft", "neon", "royal", "terminal",
+  "sakura", "carbon", "candy", "frost", "ember", "graffiti",
 ]
 
 /** Render the inner layout for a card's template (falls back to default). */

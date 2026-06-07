@@ -12,6 +12,7 @@ export type CardTemplate =
   | "classic" | "neo" | "minimal" | "retro" | "polaroid"
   | "aurora" | "midnight" | "sticker" | "blueprint" | "vapor"
   | "comic" | "kraft" | "neon" | "royal" | "terminal"
+  | "sakura" | "carbon" | "candy" | "frost" | "ember" | "graffiti"
 
 // Holographic effect overlay (ported from pokemon-cards-css).
 export type HoloEffectId =

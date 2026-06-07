@@ -104,9 +104,14 @@ export function PetCard({
           {/* Template-specific content */}
           {renderTemplate(card)}
 
-          {/* Holographic overlays (no-op when effect is "none") */}
-          <div className="holo-shine" />
-          <div className="holo-glare" />
+          {/* Holographic overlays — only mounted when an effect is active, so
+              non-holo cards don't pay any blend-mode / compositing cost. */}
+          {effect !== "none" && (
+            <>
+              <div className="holo-shine" />
+              <div className="holo-glare" />
+            </>
+          )}
         </div>
       </div>
     </div>

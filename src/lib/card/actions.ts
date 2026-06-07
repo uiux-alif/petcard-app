@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { getSupabaseServerClient } from "@/lib/supabase/server"
 import { slugifyTitle, sanitizeForPersist } from "@/lib/card/mappers"
+import { rateLimit } from "@/lib/rate-limit"
 import type { CardData } from "@/types/card"
 import type { Database } from "@/lib/supabase/types"
 
@@ -20,6 +21,12 @@ export async function saveCard(
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) return { ok: false, error: "You must be signed in to save a card." }
+
+  // Throttle card creation to curb spam (30 / minute per user).
+  const limit = rateLimit(`save:${user.id}`, 30, 60_000)
+  if (!limit.ok) {
+    return { ok: false, error: `Slow down a moment — try again in ${limit.retryAfter}s.` }
+  }
 
   const title = card.name?.trim() || "Untitled"
   const insert: Database["public"]["Tables"]["cards"]["Insert"] = {
@@ -77,6 +84,12 @@ export async function toggleLike(cardId: string): Promise<ActionResult<{ liked: 
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) return { ok: false, error: "Sign in to like cards." }
+
+  // Throttle likes to curb toggle-spam (60 / minute per user).
+  const limit = rateLimit(`like:${user.id}`, 60, 60_000)
+  if (!limit.ok) {
+    return { ok: false, error: `Slow down a moment — try again in ${limit.retryAfter}s.` }
+  }
 
   const { data: existing } = await supabase
     .from("card_likes")
@@ -150,4 +163,63 @@ export async function shuffleShowcaseCards(
 ): Promise<import("@/types/card").PetCardRecord[]> {
   const { fetchRandomPokemonCards } = await import("@/lib/pokeapi/fetch")
   return fetchRandomPokemonCards(count)
+}
+
+/**
+ * Report a public card for moderation review. Anyone signed in can report;
+ * a user can only report a given card once (enforced by a unique constraint).
+ */
+export async function reportCard(
+  cardId: string,
+  reason: string,
+): Promise<ActionResult> {
+  const supabase = await getSupabaseServerClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return { ok: false, error: "Sign in to report a card." }
+
+  // Synthetic PokéAPI cards aren't in our DB and can't be reported.
+  if (cardId.startsWith("pokedex-")) {
+    return { ok: false, error: "Sample cards can't be reported." }
+  }
+
+  const trimmed = reason.trim().slice(0, 500)
+  if (trimmed.length < 3) return { ok: false, error: "Please add a short reason." }
+
+  // Throttle reporting (10 / minute per user).
+  const limit = rateLimit(`report:${user.id}`, 10, 60_000)
+  if (!limit.ok) {
+    return { ok: false, error: `Slow down a moment — try again in ${limit.retryAfter}s.` }
+  }
+
+  const { error } = await supabase
+    .from("card_reports")
+    .insert({ card_id: cardId, reporter_id: user.id, reason: trimmed })
+
+  if (error) {
+    if (error.code === "23505") return { ok: true } // already reported — treat as success
+    return { ok: false, error: error.message }
+  }
+  return { ok: true }
+}
+
+/**
+ * Permanently delete the signed-in user's account and all their data
+ * (cards, likes, profile). Implemented as a SECURITY DEFINER RPC so it can
+ * remove the auth.users row too. See supabase/schema.sql → delete_my_account().
+ */
+export async function deleteAccount(): Promise<ActionResult> {
+  const supabase = await getSupabaseServerClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) return { ok: false, error: "You must be signed in." }
+
+  const { error } = await supabase.rpc("delete_my_account")
+  if (error) return { ok: false, error: error.message }
+
+  await supabase.auth.signOut()
+  revalidatePath("/")
+  return { ok: true }
 }

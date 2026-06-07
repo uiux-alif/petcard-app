@@ -204,3 +204,49 @@ create policy "card_images_delete_own" on storage.objects
     bucket_id = 'card-images'
     and auth.uid()::text = (storage.foldername(name))[1]
   );
+
+-- ─── Content moderation: card_reports ─────────────────────
+
+create table if not exists public.card_reports (
+  id          uuid primary key default gen_random_uuid(),
+  card_id     uuid not null references public.cards (id) on delete cascade,
+  reporter_id uuid not null references public.users (id) on delete cascade,
+  reason      text not null,
+  status      text not null default 'open',  -- open | reviewed | dismissed
+  created_at  timestamptz not null default now(),
+  unique (card_id, reporter_id)
+);
+
+create index if not exists card_reports_card_id_idx on public.card_reports (card_id);
+create index if not exists card_reports_status_idx on public.card_reports (status);
+
+alter table public.card_reports enable row level security;
+
+-- Reporters can file a report for themselves; reads are restricted (no public
+-- select policy → only the service role / dashboard can review the queue).
+drop policy if exists "reports_insert_self" on public.card_reports;
+create policy "reports_insert_self" on public.card_reports
+  for insert with check (auth.uid() = reporter_id);
+
+-- ─── GDPR: self-service account deletion ──────────────────
+-- Deletes the caller's auth.users row; ON DELETE CASCADE removes their
+-- public.users row, cards, likes, and reports. SECURITY DEFINER so it can
+-- reach auth.users while still only ever deleting the *calling* user.
+
+create or replace function public.delete_my_account()
+returns void
+language plpgsql
+security definer set search_path = public
+as $$
+declare
+  uid uuid := auth.uid();
+begin
+  if uid is null then
+    raise exception 'Not authenticated';
+  end if;
+  delete from auth.users where id = uid;
+end;
+$$;
+
+revoke all on function public.delete_my_account() from public, anon;
+grant execute on function public.delete_my_account() to authenticated;

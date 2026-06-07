@@ -463,3 +463,163 @@
   content: "> ";
   color: #4ade80;
 }
+
+/* ─── SAKURA — soft pink blossom ─── */
+.pet-card[data-template="sakura"] {
+  background: linear-gradient(165deg, #fff1f5 0%, #ffe0ec 45%, #ffd1e3 100%) !important;
+  border: 2px solid #f9a8d4 !important;
+}
+
+.pet-card[data-template="sakura"] .st-inner {
+  --st-accent: #db2777;
+  --st-fg: #831843;
+  --st-muted: rgba(131, 24, 67, 0.65);
+  --st-faint: rgba(131, 24, 67, 0.45);
+  --st-panel: rgba(255, 255, 255, 0.6);
+  --st-border: rgba(244, 114, 182, 0.45);
+  --st-radius: 14px;
+}
+
+.pet-card[data-template="sakura"] .st-name {
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.pet-card[data-template="sakura"] .st-photo {
+  border: 2px solid rgba(244, 114, 182, 0.6);
+}
+
+/* ─── CARBON — woven carbon fiber ─── */
+.pet-card[data-template="carbon"] {
+  background:
+    repeating-linear-gradient(45deg, #1a1a1d 0 3px, #141417 3px 6px),
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.04) 0 3px, transparent 3px 6px),
+    #131316 !important;
+}
+
+.pet-card[data-template="carbon"] .st-inner {
+  --st-accent: #f43f5e;
+  --st-fg: #f4f4f5;
+  --st-muted: rgba(244, 244, 245, 0.55);
+  --st-faint: rgba(244, 244, 245, 0.38);
+  --st-panel: rgba(255, 255, 255, 0.05);
+  --st-border: rgba(255, 255, 255, 0.14);
+  --st-radius: 4px;
+}
+
+.pet-card[data-template="carbon"] .st-name {
+  letter-spacing: 0.02em;
+}
+
+.pet-card[data-template="carbon"] .st-hp-num,
+.pet-card[data-template="carbon"] .st-move-dmg {
+  text-shadow: 0 0 10px rgba(244, 63, 94, 0.5);
+}
+
+/* ─── CANDY — bubblegum pop ─── */
+.pet-card[data-template="candy"] {
+  background: linear-gradient(160deg, #fef08a 0%, #fbcfe8 50%, #a5f3fc 100%) !important;
+  border: 3px solid #fff !important;
+}
+
+.pet-card[data-template="candy"] .st-inner {
+  --st-accent: #7c3aed;
+  --st-fg: #4c1d95;
+  --st-muted: rgba(76, 29, 149, 0.7);
+  --st-faint: rgba(76, 29, 149, 0.5);
+  --st-panel: rgba(255, 255, 255, 0.7);
+  --st-border: rgba(255, 255, 255, 0.9);
+  --st-radius: 16px;
+}
+
+.pet-card[data-template="candy"] .st-name {
+  text-shadow: 1px 1px 0 #fff;
+}
+
+.pet-card[data-template="candy"] .st-stat,
+.pet-card[data-template="candy"] .st-move,
+.pet-card[data-template="candy"] .st-photo {
+  box-shadow: 0 2px 0 rgba(124, 58, 237, 0.15);
+}
+
+/* ─── FROST — frosted glass ─── */
+.pet-card[data-template="frost"] {
+  background: linear-gradient(155deg, #0c2233 0%, #114b5f 55%, #0a3a4a 100%) !important;
+}
+
+.pet-card[data-template="frost"] .st-inner {
+  --st-accent: #a5f3fc;
+  --st-fg: #ecfeff;
+  --st-muted: rgba(236, 254, 255, 0.62);
+  --st-faint: rgba(236, 254, 255, 0.4);
+  --st-panel: rgba(165, 243, 252, 0.1);
+  --st-border: rgba(165, 243, 252, 0.3);
+  --st-radius: 12px;
+  backdrop-filter: blur(3px);
+}
+
+.pet-card[data-template="frost"] .st-stat,
+.pet-card[data-template="frost"] .st-move {
+  backdrop-filter: blur(8px);
+}
+
+.pet-card[data-template="frost"] .st-name {
+  text-shadow: 0 0 12px rgba(165, 243, 252, 0.45);
+}
+
+/* ─── EMBER — molten lava ─── */
+.pet-card[data-template="ember"] {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 110%, rgba(249, 115, 22, 0.45) 0%, transparent 60%),
+    linear-gradient(160deg, #1a0a02 0%, #2a1206 55%, #14060a 100%) !important;
+  border: 1px solid rgba(249, 115, 22, 0.4) !important;
+}
+
+.pet-card[data-template="ember"] .st-inner {
+  --st-accent: #fb923c;
+  --st-fg: #fff7ed;
+  --st-muted: rgba(255, 247, 237, 0.6);
+  --st-faint: rgba(255, 247, 237, 0.4);
+  --st-panel: rgba(249, 115, 22, 0.08);
+  --st-border: rgba(249, 115, 22, 0.3);
+  --st-radius: 8px;
+}
+
+.pet-card[data-template="ember"] .st-name {
+  color: #fdba74;
+  text-shadow: 0 0 14px rgba(249, 115, 22, 0.6);
+}
+
+.pet-card[data-template="ember"] .st-hp-num,
+.pet-card[data-template="ember"] .st-move-dmg {
+  text-shadow: 0 0 10px rgba(251, 146, 60, 0.6);
+}
+
+/* ─── GRAFFITI — street art concrete ─── */
+.pet-card[data-template="graffiti"] {
+  background:
+    radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(160deg, #2b2b2e 0%, #1f1f22 100%) !important;
+  background-size: 5px 5px, 100% 100% !important;
+  border: 2px solid #18181b !important;
+}
+
+.pet-card[data-template="graffiti"] .st-inner {
+  --st-accent: #facc15;
+  --st-fg: #fafafa;
+  --st-muted: rgba(250, 250, 250, 0.6);
+  --st-faint: rgba(250, 250, 250, 0.42);
+  --st-panel: rgba(255, 255, 255, 0.06);
+  --st-border: rgba(255, 255, 255, 0.16);
+  --st-radius: 6px;
+}
+
+.pet-card[data-template="graffiti"] .st-name {
+  font-family: var(--font-card-sans), sans-serif;
+  text-transform: uppercase;
+  color: #facc15;
+  text-shadow: 2px 2px 0 #ec4899, 4px 4px 0 rgba(0, 0, 0, 0.4);
+}
+
+.pet-card[data-template="graffiti"] .st-type {
+  color: #4ade80;
+}

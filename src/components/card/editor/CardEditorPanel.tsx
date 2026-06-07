@@ -64,7 +64,7 @@ export function CardEditorPanel(props: CardEditorPanelProps) {
 
       {/* Template */}
       <EditorSection title="Template">
-        <TemplateSelector value={card.template ?? "classic"} onChange={onTemplate} />
+        <TemplateSelector card={card} value={card.template ?? "classic"} onChange={onTemplate} />
       </EditorSection>
 
       {/* Font */}
@@ -74,7 +74,7 @@ export function CardEditorPanel(props: CardEditorPanelProps) {
 
       {/* Holographic effect */}
       <EditorSection title="Holographic Effect">
-        <HoloSelector value={card.holo ?? "none"} onChange={onHolo} />
+        <HoloSelector card={card} value={card.holo ?? "none"} onChange={onHolo} />
         <div className="mt-3 flex items-center gap-2.5">
           <span className="w-14 shrink-0 font-mono text-[10px] uppercase tracking-wide text-muted-foreground">
             Strength

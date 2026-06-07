@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { LogOut, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { DonateButton } from "@/components/layout/DonateButton"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -84,6 +85,8 @@ export function SiteHeader() {
               </Link>
             )
           })}
+
+          <DonateButton variant="link" className="ml-1 hidden text-[13px] text-muted-foreground sm:inline-flex" />
 
           {enabled && user ? (
             <DropdownMenu>

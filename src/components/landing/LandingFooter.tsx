@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Star, ExternalLink, Heart } from "lucide-react"
+import { DonateButton } from "@/components/layout/DonateButton"
 
 interface Credit {
   name: string
@@ -85,7 +86,7 @@ export function LandingFooter() {
         </div>
 
         {/* Stack chips */}
-        <div className="mb-12 flex flex-wrap items-center gap-2">
+        <div className="mb-10 flex flex-wrap items-center gap-2">
           <span className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">
             Built with
           </span>
@@ -99,6 +100,18 @@ export function LandingFooter() {
           ))}
         </div>
 
+        {/* Free forever + optional support */}
+        <div className="mb-12 flex flex-col items-start gap-4 rounded-2xl border border-border bg-background/50 p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-card-sans text-base font-bold">PetCard is free — forever. 💛</p>
+            <p className="mt-1 max-w-md text-sm text-muted-foreground">
+              No paywalls, no limits. If it made you smile and you want to help cover hosting,
+              a coffee goes a long way. Totally optional.
+            </p>
+          </div>
+          <DonateButton className="shrink-0" />
+        </div>
+
         {/* Bottom bar */}
         <div className="flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
           <div className="flex items-center gap-2">
@@ -106,7 +119,7 @@ export function LandingFooter() {
             <span className="text-xs text-muted-foreground">— made for good pets everywhere</span>
           </div>
 
-          <div className="flex items-center gap-5 text-sm text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
             <Link href="/community" className="hover:text-foreground">
               Community
             </Link>
@@ -115,6 +128,12 @@ export function LandingFooter() {
             </Link>
             <Link href="/card-review" className="hover:text-foreground">
               Effects
+            </Link>
+            <Link href="/terms" className="hover:text-foreground">
+              Terms
+            </Link>
+            <Link href="/privacy" className="hover:text-foreground">
+              Privacy
             </Link>
             <a
               href="https://github.com/simeydotme/pokemon-cards-css"

@@ -249,6 +249,36 @@ export const CARD_TEMPLATES: Record<CardTemplate, TemplateMeta> = {
     label: "Terminal",
     description: "Green-on-black hacker console readout.",
   },
+  sakura: {
+    id: "sakura",
+    label: "Sakura",
+    description: "Soft pink blossom wash with a delicate petal frame.",
+  },
+  carbon: {
+    id: "carbon",
+    label: "Carbon",
+    description: "Woven carbon-fiber slab with a sharp tech accent.",
+  },
+  candy: {
+    id: "candy",
+    label: "Candy",
+    description: "Bright bubblegum pop with playful pastel panels.",
+  },
+  frost: {
+    id: "frost",
+    label: "Frost",
+    description: "Icy frosted glass with a cool cyan shimmer.",
+  },
+  ember: {
+    id: "ember",
+    label: "Ember",
+    description: "Molten dark slab with a glowing lava accent.",
+  },
+  graffiti: {
+    id: "graffiti",
+    label: "Graffiti",
+    description: "Street-art concrete wall with bold spray-paint pops.",
+  },
 }
 
 export const DEFAULT_TEMPLATE: CardTemplate = "classic"

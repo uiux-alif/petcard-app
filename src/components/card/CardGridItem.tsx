@@ -32,7 +32,11 @@ export function CardGridItem({
 }: CardGridItemProps) {
   const rarity = getRarityConfig(card.rarity)
 
-  const cardVisual = <PetCard card={card} compact tilt interactive={!href} />
+  // Grid cards: full hover holo + 3D tilt (driven by pointer only while you're
+  // hovering a card — cheap). We skip the idle "breathing" animation here: 24+
+  // cards each running an infinite animation at rest was the real source of
+  // jank. So you get the lively hover/tilt, without the permanent idle cost.
+  const cardVisual = <PetCard card={card} compact tilt idle={false} interactive={!href} />
 
   return (
     <div className="flex flex-col items-center gap-3">

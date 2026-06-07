@@ -101,6 +101,7 @@ export function useCardBuilder(initial?: Partial<CardData>) {
       "classic", "neo", "minimal", "retro", "polaroid",
       "aurora", "midnight", "sticker", "blueprint", "vapor",
       "comic", "kraft", "neon", "royal", "terminal",
+      "sakura", "carbon", "candy", "frost", "ember", "graffiti",
     ]
     const holos: HoloEffectId[] = [
       "basic", "reverse", "regular", "rainbow", "cosmos", "radiant", "secret", "galaxy",

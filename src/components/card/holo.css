@@ -35,6 +35,17 @@
      cover so repeat is harmless to them. Using no-repeat here caused the
      glitter to render as one centered tile (a dark speckled box). */
   background-repeat: repeat;
+  /* NOTE: `will-change` is intentionally NOT global here. Promoting every
+     overlay to its own GPU layer permanently is what made big grids lag.
+     We opt in only while a card is breathing or hovered (see below). */
+}
+
+/* Only hint the compositor while the card is actually animating — breathing
+   at rest, or interacted with on hover. At rest, no layer is allocated. */
+.pet-card.holo-idle .holo-shine,
+.pet-card.holo-idle .holo-glare,
+.pet-card:hover .holo-shine,
+.pet-card:hover .holo-glare {
   will-change: opacity, background-position, background-size, filter;
 }
 

@@ -87,6 +87,28 @@ export interface Database {
         }
         Relationships: []
       }
+      card_reports: {
+        Row: {
+          id: string
+          card_id: string
+          reporter_id: string
+          reason: string
+          status: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          card_id: string
+          reporter_id: string
+          reason: string
+          status?: string
+          created_at?: string
+        }
+        Update: {
+          status?: string
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
